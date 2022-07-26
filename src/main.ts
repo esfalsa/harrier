@@ -12,10 +12,13 @@ async function fetchNS(
 		| URLSearchParams = "",
 	options: Record<string, any> = {},
 ) {
-	let resource = Object.assign(
+	const search = new URLSearchParams(searchParams);
+	search.append("user-agent", config.userAgent);
+
+	const resource = Object.assign(
 		new URL(pathname, "https://www.nationstates.net"),
 		{
-			search: new URLSearchParams(searchParams),
+			search: search,
 		},
 	);
 

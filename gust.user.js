@@ -56,8 +56,10 @@ function createElement(tagName, properties) {
     return Object.assign(document.createElement(tagName), properties);
 }
 async function fetchNS(pathname, searchParams = "", options = {}) {
-    let resource = Object.assign(new URL(pathname, "https://www.nationstates.net"), {
-        search: new URLSearchParams(searchParams),
+    const search = new URLSearchParams(searchParams);
+    search.append("user-agent", config.userAgent);
+    const resource = Object.assign(new URL(pathname, "https://www.nationstates.net"), {
+        search: search,
     });
     options.headers = { ...options.headers, "User-Agent": config.userAgent };
     options.redirect = "manual";
