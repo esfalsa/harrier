@@ -1,0 +1,19 @@
+{
+	"name": "gust",
+	"version": "0.1.0",
+	"description": "Key bindings for NationStates, and more.",
+	"main": "src/main.ts",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Pronoun",
+	"license": "AGPL-3.0-or-later",
+	"devDependencies": {
+		"@commitlint/cli": "^17.0.3",
+		"@commitlint/config-conventional": "^17.0.3",
+		"husky": "^8.0.1"
+	}
+}
