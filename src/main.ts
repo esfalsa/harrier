@@ -29,8 +29,8 @@ async function fetchNS(
 }
 
 /* VARIABLES */
-let currentNation, localid;
-let chk, dossed;
+let currentNation: string, localid: string;
+let chk: string, dossed: string[];
 
 let disableKeybinds = false;
 
