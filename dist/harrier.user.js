@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name					Gust
+// @name					Harrier
 // @namespace			https://esfalsa.github.io
 // @description		Keybinds for NationStates.
 // @match					*://*.nationstates.net/*
@@ -48,7 +48,7 @@ const config = {
     officerName: "SPSF",
     jumpPoint: "Artificial Solar System",
     get userAgent() {
-        return `Script: Gust v${this.version}; User: ${this.user}; Script author: Pronoun (esfalsa.github.io)`;
+        return `Script: Harrier v${this.version}; User: ${this.user}; Script author: Pronoun (esfalsa.github.io)`;
     },
 };
 /* UTILITIES */

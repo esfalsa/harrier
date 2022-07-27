@@ -2,7 +2,7 @@
 	"files": ["src/config.ts", "src/main.ts", "src/styles.ts", "src/desktop.ts"],
 	"compilerOptions": {
 		"target": "es2021",
-		"outFile": "dist/gust.user.js",
+		"outFile": "dist/harrier.user.js",
 		"module": "none"
 	}
 }
