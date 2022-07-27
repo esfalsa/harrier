@@ -49,8 +49,8 @@ async function handleKeystroke(key: string) {
 				: `/template-overall=none${location.pathname}${location.search}${location.hash}`,
 		);
 	} else if (key === config.keybinds.moveJP) {
-		move(config.jumpPoint.toLowerCase().replaceAll(" ", "_")).then(() => {
-			alert(`Moved back to ${config.jumpPoint}.`);
+		move(config.jumpPoint).then(() => {
+			alert(`Moved back to ${config.jumpPointName}.`);
 		});
 	} else if (key === config.keybinds.move) {
 		if (location.pathname.includes("/region=")) {
@@ -68,27 +68,41 @@ async function handleKeystroke(key: string) {
 	} else if (key === config.keybinds.endorse) {
 		if (location.pathname.includes("/nation=")) {
 			(document.querySelector("button.endorse") as HTMLButtonElement).click();
-		} else {
+		} else if (
+			/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(
+				location.pathname,
+			)
+		) {
 			(
 				document.querySelector(
 					"button[data-action=endorse]:not([disabled])",
 				) as HTMLButtonElement
 			).click();
-		}
-	} else if (key === config.keybinds.doss) {
-		if (location.pathname.includes("/nation=")) {
-			(
-				document.querySelector(
-					"button[name=action][value=add]",
-				) as HTMLButtonElement
-			).click();
 		} else {
-			(
-				document.querySelector(
-					"button[data-action=doss]:not([disabled])",
-				) as HTMLButtonElement
-			).click();
+			location.assign(
+				`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,
+			);
 		}
+	} else if (
+		key === config.keybinds.doss &&
+		location.pathname.includes("/nation=")
+	) {
+		(
+			document.querySelector(
+				"button[name=action][value=add]",
+			) as HTMLButtonElement
+		).click();
+	} else if (
+		key === config.keybinds.doss &&
+		/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(
+			location.pathname,
+		)
+	) {
+		(
+			document.querySelector(
+				"button[data-action=doss]:not([disabled])",
+			) as HTMLButtonElement
+		).click();
 	} else if (key === config.keybinds.viewDossier) {
 		location.assign("/template-overall=none/page=dossier");
 	} else if (key === config.keybinds.clearDossier) {
@@ -114,6 +128,8 @@ async function handleKeystroke(key: string) {
 		applyWA().then(() => {
 			alert("Applied to the World Assembly.");
 		});
+	} else if (key === config.keybinds.global) {
+		location.assign("/page=ajax2/a=reports/view=world/filter=change");
 	} else if (key === config.keybinds.resign) {
 		resignWA().then(() => {
 			alert("Resigned from the World Assembly.");
@@ -130,6 +146,13 @@ async function handleKeystroke(key: string) {
 		history.back();
 	} else if (key === config.keybinds.forward) {
 		history.forward();
+	} else if (config.keybinds.dossPoints.includes(key)) {
+		const index = config.keybinds.dossPoints.indexOf(key);
+		if (index < config.dossPoints.length) {
+			location.assign(
+				`/page=ajax2/a=reports/view=region.${config.dossPoints[index]}/filter=member/action=doss`,
+			);
+		}
 	}
 
 	return true;

@@ -156,6 +156,11 @@ if (location.pathname.includes("page=ajax2")) {
 		});
 }
 
+/* SCROLLING */
+window.addEventListener("beforeunload", () => {
+	window.scrollTo(0, 0);
+});
+
 /* REQUESTS */
 async function getChkDoss(): Promise<[string, string[]]> {
 	const response = await (

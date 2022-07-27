@@ -18,6 +18,7 @@ const config = {
         endorse: "e",
         doss: "d",
         appointRO: "o",
+        global: "g",
         viewDossier: "v",
         clearDossier: "x",
         apply: "[",
@@ -26,6 +27,7 @@ const config = {
         reload: "n",
         back: ",",
         forward: ".",
+        dossPoints: ["d", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     },
     styles: {
         backgroundColor: "#f9f9f9",
@@ -46,9 +48,16 @@ const config = {
         },
     },
     officerName: "SPSF",
-    jumpPoint: "Artificial Solar System",
+    jumpPointName: "Artificial Solar System",
+    dossPointNames: ["Suspicious", "The Allied Nations of Egalaria"],
     get userAgent() {
         return `Script: Harrier v${this.version}; User: ${this.user}; Script author: Pronoun (esfalsa.github.io)`;
+    },
+    get jumpPoint() {
+        return this.jumpPointName.toLowerCase().replaceAll(" ", "_");
+    },
+    get dossPoints() {
+        return this.dossPointNames.map((name) => name.toLowerCase().replaceAll(" ", "_"));
     },
 };
 /* UTILITIES */
@@ -171,6 +180,10 @@ if (location.pathname.includes("page=ajax2")) {
         link.href = `/template-overall=none/${link.getAttribute("href")}`;
     });
 }
+/* SCROLLING */
+window.addEventListener("beforeunload", () => {
+    window.scrollTo(0, 0);
+});
 /* REQUESTS */
 async function getChkDoss() {
     const response = await (await fetchNS("template-overall=none/page=dossier")).text();
@@ -520,8 +533,8 @@ async function handleKeystroke(key) {
             : `/template-overall=none${location.pathname}${location.search}${location.hash}`);
     }
     else if (key === config.keybinds.moveJP) {
-        move(config.jumpPoint.toLowerCase().replaceAll(" ", "_")).then(() => {
-            alert(`Moved back to ${config.jumpPoint}.`);
+        move(config.jumpPoint).then(() => {
+            alert(`Moved back to ${config.jumpPointName}.`);
         });
     }
     else if (key === config.keybinds.move) {
@@ -539,17 +552,20 @@ async function handleKeystroke(key) {
         if (location.pathname.includes("/nation=")) {
             document.querySelector("button.endorse").click();
         }
-        else {
+        else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
             document.querySelector("button[data-action=endorse]:not([disabled])").click();
         }
-    }
-    else if (key === config.keybinds.doss) {
-        if (location.pathname.includes("/nation=")) {
-            document.querySelector("button[name=action][value=add]").click();
-        }
         else {
-            document.querySelector("button[data-action=doss]:not([disabled])").click();
+            location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
         }
+    }
+    else if (key === config.keybinds.doss &&
+        location.pathname.includes("/nation=")) {
+        document.querySelector("button[name=action][value=add]").click();
+    }
+    else if (key === config.keybinds.doss &&
+        /\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
+        document.querySelector("button[data-action=doss]:not([disabled])").click();
     }
     else if (key === config.keybinds.viewDossier) {
         location.assign("/template-overall=none/page=dossier");
@@ -578,6 +594,9 @@ async function handleKeystroke(key) {
             alert("Applied to the World Assembly.");
         });
     }
+    else if (key === config.keybinds.global) {
+        location.assign("/page=ajax2/a=reports/view=world/filter=change");
+    }
     else if (key === config.keybinds.resign) {
         resignWA().then(() => {
             alert("Resigned from the World Assembly.");
@@ -594,6 +613,12 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.forward) {
         history.forward();
+    }
+    else if (config.keybinds.dossPoints.includes(key)) {
+        const index = config.keybinds.dossPoints.indexOf(key);
+        if (index < config.dossPoints.length) {
+            location.assign(`/page=ajax2/a=reports/view=region.${config.dossPoints[index]}/filter=member/action=doss`);
+        }
     }
     return true;
 }
