@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name					Harrier
-// @namespace			https://esfalsa.github.io
-// @description		Keybinds for NationStates.
-// @match					*://*.nationstates.net/*
-// @run-at				document-start
-// @icon					https://www.nationstates.net/favicon.ico
+// @name          Harrier
+// @namespace     https://esfalsa.github.io
+// @description   Keybinds for NationStates.
+// @match         *://*.nationstates.net/*
+// @run-at        document-start
+// @icon          https://www.nationstates.net/favicon.ico
 // ==/UserScript==
 
-const config: any = {
+const config = {
 	version: "0.1.0",
 	user: "Pronoun",
 	keybinds: {

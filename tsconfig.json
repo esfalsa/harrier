@@ -1,8 +1,9 @@
 {
-	"files": ["src/config.ts", "src/main.ts", "src/styles.ts", "src/desktop.ts"],
+	"files": ["src/config.js", "src/main.ts", "src/styles.ts", "src/desktop.ts"],
 	"compilerOptions": {
 		"target": "es2021",
 		"outFile": "dist/harrier.user.js",
-		"module": "none"
+		"module": "none",
+		"allowJs": true
 	}
 }
