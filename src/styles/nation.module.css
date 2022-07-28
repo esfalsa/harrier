@@ -1,0 +1,67 @@
+.newmainlinebox {
+	display: inline-block;
+}
+
+.newmainlinebubble {
+	display: inline-flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	align-items: center;
+	margin-right: 1.5rem;
+}
+
+.newmainlinebubbletop {
+	font-weight: bold;
+}
+.newmainlinebubbletop::after {
+	content: ":";
+}
+
+.newmainlinebubblebottom[style] {
+	color: transparent;
+	-webkit-background-clip: text !important;
+	background-clip: text;
+}
+
+.lineundercover,
+.newnonflagstuff {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+}
+
+.newtitlepretitle,
+.newtitlename,
+.newtitlecategory {
+	display: inline-block;
+	font-size: 1.5rem;
+}
+
+.newtitlename {
+	font-weight: bold;
+}
+
+.newtitlecategory {
+	opacity: 0.5;
+}
+
+.newtitlecategory::before {
+	content: "(";
+}
+.newtitlecategory::after {
+	content: ")";
+}
+
+#nationcover,
+#badge_rack,
+#trophycabinet,
+.newsloganbox,
+.nationnavbar,
+.nationsummarybox,
+.nationsummary,
+.trophyline,
+#tgcompose,
+.newsbox > p.smalltext {
+	display: none;
+}

@@ -38,15 +38,17 @@ var config = {
         dossPoints: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     },
     styles: {
-        backgroundColor: "#f9f9f9",
-        textColor: "#383c42",
-        headingColor: "#000000",
-        linkBackground: "#fff",
-        regionColor: "#a626a4",
-        nationColor: "#4078f2",
-        linkColor: "#4078f2",
-        successColor: "#50a14f",
-        errorColor: "#e45649",
+        light: {
+            backgroundColor: "#f9f9f9",
+            textColor: "#383c42",
+            headingColor: "#000000",
+            linkBackground: "#fff",
+            regionColor: "#a626a4",
+            nationColor: "#4078f2",
+            linkColor: "#4078f2",
+            successColor: "#50a14f",
+            errorColor: "#e45649",
+        },
         dark: {
             backgroundColor: "#282c34",
             textColor: "#ABB2BF",
@@ -233,241 +235,38 @@ function showToast(text, styles = []) {
     }, 1500);
 }
 
+var css$2 = "h1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n\tcolor: var(--headingColor);\n}\n\na {\n\tcolor: var(--linkColor);\n}\n\ninput {\n\tfont-size: 1rem; /* Prevent iOS from zooming in to text box when focused. */\n\tfont-family: var(--fontSans);\n\tcolor: var(--headingColor);\n\tbackground-color: var(--linkBackground);\n\tpadding: 0.25rem 0.5rem;\n\tborder-radius: 0.25rem;\n\tborder: none;\n\tbox-shadow: var(--shadowInner), var(--shadow);\n\tcursor: pointer;\n}\n\nul,\nbody {\n\tlist-style-type: none;\n\tpadding-left: 0;\n}\n\nli {\n\tmargin: 0.5rem 0;\n\tmin-height: 1.5rem;\n}\n\n.rlink {\n\tcolor: var(--regionColor);\n\tdisplay: inline-block;\n}\n\n.nlink {\n\tcolor: var(--nationColor);\n\tdisplay: inline-flex;\n\talign-items: center;\n\tgap: 0.25rem;\n}\n\n.rlink,\n.nlink {\n\tbackground-color: var(--linkBackground);\n\tfont-weight: bold;\n\ttext-decoration: none;\n\tpadding: 0.25rem 0.5rem;\n\tborder-radius: 0.25rem;\n\tbox-shadow: var(--shadow);\n}\n\nbutton,\ninput[type=\"button\"],\ninput[type=\"submit\"] {\n\tfont-family: var(--fontSans);\n\tfont-size: 1rem;\n\tcolor: var(--text-color);\n\tbackground-color: var(--linkBackground);\n\tpadding: 0.25rem 0.5rem;\n\tborder-radius: 0.25rem;\n\tfont-weight: bold;\n\tborder: none;\n\tbox-shadow: var(--shadow);\n\tcursor: pointer;\n}\n\nbutton:disabled,\ninput[type=\"button\"]:disabled,\ninput[type=\"submit\"]:disabled {\n\topacity: 0.5;\n}\n\nbutton[data-action] {\n\tmargin-left: 0.5rem;\n\tfont-weight: normal;\n}\n\nimg.miniflag {\n\theight: 11px;\n}\n\nimg.smallflag {\n\tmax-height: 26px;\n}\n\n.newflagbox a img {\n\tmax-height: 60px;\n}\n";
+
+var css$1 = ".newmainlinebox {\n\tdisplay: inline-block;\n}\n\n.newmainlinebubble {\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\tgap: 0.25rem;\n\talign-items: center;\n\tmargin-right: 1.5rem;\n}\n\n.newmainlinebubbletop {\n\tfont-weight: bold;\n}\n.newmainlinebubbletop::after {\n\tcontent: \":\";\n}\n\n.newmainlinebubblebottom[style] {\n\tcolor: transparent;\n\t-webkit-background-clip: text !important;\n\tbackground-clip: text;\n}\n\n.lineundercover,\n.newnonflagstuff {\n\tdisplay: flex;\n\tflex-direction: row;\n\talign-items: center;\n\tgap: 1rem;\n}\n\n.newtitlepretitle,\n.newtitlename,\n.newtitlecategory {\n\tdisplay: inline-block;\n\tfont-size: 1.5rem;\n}\n\n.newtitlename {\n\tfont-weight: bold;\n}\n\n.newtitlecategory {\n\topacity: 0.5;\n}\n\n.newtitlecategory::before {\n\tcontent: \"(\";\n}\n.newtitlecategory::after {\n\tcontent: \")\";\n}\n\n#nationcover,\n#badge_rack,\n#trophycabinet,\n.newsloganbox,\n.nationnavbar,\n.nationsummarybox,\n.nationsummary,\n.trophyline,\n#tgcompose,\n.newsbox > p.smalltext {\n\tdisplay: none;\n}\n";
+
+var css = ":root {\n\t--fontSans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,\n\t\t\"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif,\n\t\t\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n\t--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n\t--shadowInner: inset 0 2px 4px 0 rgb(0 0 0 / 0.075);\n\tfont-family: var(--fontSans);\n\tcolor: var(--textColor);\n}\n\n#toast-container {\n\tz-index: 100;\n\tfont-family: var(--fontSans);\n\tfont-size: 1rem;\n\tposition: fixed;\n\ttop: 1rem;\n\tright: 1rem;\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: flex-end;\n}\n\n.toast {\n\tbackground-color: var(--textColor);\n\tcolor: var(--backgroundColor);\n\ttransform: translate(0px, 0px);\n\tpadding: 0.5rem;\n\tborder-radius: 0.5rem;\n\tbox-shadow: var(--shadow);\n\ttransition: 0.5s ease-in-out;\n\ttransition-property: all;\n\tmax-width: 50vw;\n\tline-height: 1.2;\n\tmax-height: calc(1.2em + 1rem);\n\ttext-overflow: ellipsis;\n\toverflow: hidden;\n\twhite-space: nowrap;\n\tmargin-bottom: 0.5rem;\n}\n\n.toast.success {\n\tbackground-color: var(--successColor);\n}\n\n.toast.error {\n\tbackground-color: var(--errorColor);\n}\n";
+
+const root = document.documentElement.style;
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    for (const [name, value] of Object.entries(config.styles.dark)) {
+        root.setProperty(`--${name}`, value);
+    }
+}
+else {
+    for (const [name, value] of Object.entries(config.styles.light)) {
+        root.setProperty(`--${name}`, value);
+    }
+}
 function addCSS(css) {
     document.head.appendChild(document.createElement("style")).innerHTML = css;
 }
-/* STYLING */
-const styles = /*css*/ `
-:root {
-  --background-color: ${config.styles.backgroundColor};
-  --text-color: ${config.styles.textColor};
-  --heading-color: ${config.styles.headingColor};
-  --link-background: ${config.styles.linkBackground};
-  --region-color: ${config.styles.regionColor};
-  --nation-color: ${config.styles.nationColor};
-  --link-color: ${config.styles.linkColor};
-  --success-color: ${config.styles.successColor};
-  --error-color: ${config.styles.errorColor};
-
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.075);
-
-  background-color: var(--background-color);
-  font-family: var(--font-sans);
-  color: var(--text-color);
+addCSS(css);
+if (!document.querySelectorAll('meta[name="viewport"]').length) {
+    addCSS(css$2);
 }
-
-${config.styles?.dark &&
-    /*css*/ `@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: ${config.styles.dark.backgroundColor};
-    --text-color: ${config.styles.dark.textColor};
-    --heading-color: ${config.styles.dark.headingColor};
-    --link-background: ${config.styles.dark.linkBackground};
-    --region-color: ${config.styles.dark.regionColor};
-    --nation-color: ${config.styles.dark.nationColor};
-    --link-color: ${config.styles.dark.linkColor};
-    --success-color: ${config.styles.dark.successColor};
-    --error-color: ${config.styles.dark.errorColor};
-  }
-}`}
-
-#toast-container {
-  z-index: 100;
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.toast {
-  background-color: var(--text-color);
-  color: var(--background-color);
-  transform: translate(0px, 0px);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow);
-  transition: 0.5s ease-in-out;
-  transition-property: all;
-  max-width: 50vw;
-  line-height: 1.2;
-  max-height: calc(1.2em + 1rem);
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-bottom: 0.5rem;
-}
-
-.toast.success {
-  background-color: var(--success-color);
-}
-
-.toast.error {
-  background-color: var(--error-color);
-}
-`;
-const templateStyles = /*css*/ `
-h1, h2, h3, h4, h5, h6 {
-  color: var(--heading-color);
-}
-
-a {
-  color: var(--link-color);
-}
-
-input {
-  font-size: 1rem; /* Prevent iOS from zooming in to text box when focused. */
-  font-family: var(--font-sans);
-  color: var(--heading-color);
-  background-color: var(--link-background);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  box-shadow: var(--shadow-inner), var(--shadow);
-  cursor: pointer;
-}
-
-ul, body {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-li {
-  margin: 0.5rem 0;
-  min-height: 1.5rem;
-}
-
-.rlink {
-  color: var(--region-color);
-  display: inline-block;
-}
-
-.nlink {
-  color: var(--nation-color);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.rlink, .nlink {
-  background-color: var(--link-background);
-  font-weight: bold;
-  text-decoration: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  box-shadow: var(--shadow);
-}
-
-button, input[type="button"], input[type="submit"] {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  color: var(--text-color);
-  background-color: var(--link-background);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-weight: bold;
-  border: none;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-}
-
-button:disabled, input[type="button"]:disabled, input[type="submit"]:disabled {
-  opacity: 0.5;
-}
-
-button[data-action] {
-  margin-left: 0.5rem;
-  font-weight: normal;
-}
-
-img.miniflag {
-  height: 11px;
-}
-
-img.smallflag {
-  max-height: 26px;
-}
-
-.newflagbox a img {
-  max-height: 60px;
-}
-`;
-const nationStyles = /*css*/ `
-.newmainlinebox {
-  display: inline-block;
-}
-
-.newmainlinebubble {
-  display: inline-flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  align-items: center;
-  margin-right: 1.5rem;
-}
-
-.newmainlinebubbletop {
-  font-weight: bold;
-}
-.newmainlinebubbletop::after {
-  content: ":";
-}
-
-.newmainlinebubblebottom[style] {
-  color: transparent;
-  -webkit-background-clip: text !important;
-  background-clip: text;
-}
-
-.lineundercover, .newnonflagstuff {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-}
-
-.newtitlepretitle, .newtitlename, .newtitlecategory {
-  display: inline-block;
-  font-size: 1.5rem;
-}
-
-.newtitlename {
-  font-weight: bold;
-}
-
-.newtitlecategory {
-  opacity: 0.5;
-}
-
-.newtitlecategory::before {
-  content: "(";
-}
-.newtitlecategory::after {
-  content: ")";
-}
-
-#nationcover, #badge_rack, #trophycabinet, .newsloganbox, .nationnavbar, .nationsummarybox, .nationsummary, .trophyline, #tgcompose, .newsbox > p.smalltext {
-  display: none;
-}
-`;
-addCSS(styles);
 if ((location.pathname.includes("template-overall=none") ||
     location.pathname.includes("page=ajax2")) &&
-    !location.pathname.includes("page=blank") &&
-    !document.querySelectorAll('meta[name="viewport"]').length) {
-    createElement("meta", {
-        name: "viewport",
-        content: "width=device-width,initial-scale=1.0",
-    });
-    addCSS(templateStyles);
+    !location.pathname.includes("page=blank")) {
+    addCSS(css$2);
 }
 if (location.pathname.includes("template-overall=none") &&
     location.pathname.includes("nation=")) {
-    addCSS(nationStyles);
+    addCSS(css$1);
 }
 
 let disableKeybinds = false;

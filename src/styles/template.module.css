@@ -1,0 +1,95 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--headingColor);
+}
+
+a {
+	color: var(--linkColor);
+}
+
+input {
+	font-size: 1rem; /* Prevent iOS from zooming in to text box when focused. */
+	font-family: var(--fontSans);
+	color: var(--headingColor);
+	background-color: var(--linkBackground);
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
+	border: none;
+	box-shadow: var(--shadowInner), var(--shadow);
+	cursor: pointer;
+}
+
+ul,
+body {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+li {
+	margin: 0.5rem 0;
+	min-height: 1.5rem;
+}
+
+.rlink {
+	color: var(--regionColor);
+	display: inline-block;
+}
+
+.nlink {
+	color: var(--nationColor);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.rlink,
+.nlink {
+	background-color: var(--linkBackground);
+	font-weight: bold;
+	text-decoration: none;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
+	box-shadow: var(--shadow);
+}
+
+button,
+input[type="button"],
+input[type="submit"] {
+	font-family: var(--fontSans);
+	font-size: 1rem;
+	color: var(--text-color);
+	background-color: var(--linkBackground);
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
+	font-weight: bold;
+	border: none;
+	box-shadow: var(--shadow);
+	cursor: pointer;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled {
+	opacity: 0.5;
+}
+
+button[data-action] {
+	margin-left: 0.5rem;
+	font-weight: normal;
+}
+
+img.miniflag {
+	height: 11px;
+}
+
+img.smallflag {
+	max-height: 26px;
+}
+
+.newflagbox a img {
+	max-height: 60px;
+}

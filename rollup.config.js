@@ -1,6 +1,8 @@
 import typescript from "@rollup/plugin-typescript";
 import metablock from "rollup-plugin-userscript-metablock";
 import json from "@rollup/plugin-json";
+import styles from "rollup-plugin-styles";
+import del from "rollup-plugin-delete";
 
 import pkg from "./package.json";
 
@@ -9,6 +11,7 @@ export default {
 	output: {
 		file: "dist/harrier.user.js",
 		format: "es",
+		manualChunks: () => null,
 	},
 	plugins: [
 		typescript(),
@@ -22,6 +25,13 @@ export default {
 				author: pkg.author,
 				license: pkg.license,
 			},
+		}),
+		styles({
+			mode: "extract",
+		}),
+		del({
+			targets: ["dist/assets/*", "dist/assets/"],
+			hook: "writeBundle",
 		}),
 	],
 };
