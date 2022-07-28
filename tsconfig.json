@@ -1,9 +1,11 @@
 {
-	"files": ["src/config.js", "src/main.ts", "src/styles.ts", "src/desktop.ts"],
+	"include": ["src/**/*.ts"],
 	"compilerOptions": {
-		"target": "es2021",
-		"outFile": "dist/harrier.user.js",
-		"module": "none",
-		"allowJs": true
+		"target": "es2022",
+		"module": "ES2022",
+		"moduleResolution": "nodenext",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"lib": ["ES2022", "dom"]
 	}
 }

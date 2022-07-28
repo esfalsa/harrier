@@ -1,13 +1,21 @@
 // ==UserScript==
-// @name          Harrier
-// @namespace     https://esfalsa.github.io
-// @description   Keybinds for NationStates.
-// @match         *://*.nationstates.net/*
-// @run-at        document-start
-// @icon          https://www.nationstates.net/favicon.ico
+// @name        harrier
+// @description Key bindings and shortcuts for NationStates.
+// @namespace   github.com/esfalsa
+// @match       *://*.nationstates.net/*
+// @run-at      document-start
+// @updateURL   https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
+// @downloadURL https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
+// @homepageURL https://esfalsa.github.io/harrier/
+// @version     0.1.0
+// @author      Pronoun
+// @license     AGPL-3.0-or-later
+// @grant       none
 // ==/UserScript==
-const config = {
-    version: "0.1.0",
+var version = "0.1.0";
+
+var config = {
+    version: version,
     user: "Pronoun",
     keybinds: {
         reports: " ",
@@ -27,7 +35,7 @@ const config = {
         reload: "n",
         back: ",",
         forward: ".",
-        dossPoints: ["d", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+        dossPoints: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     },
     styles: {
         backgroundColor: "#f9f9f9",
@@ -60,7 +68,15 @@ const config = {
         return this.dossPointNames.map((name) => name.toLowerCase().replaceAll(" ", "_"));
     },
 };
-/* UTILITIES */
+
+let currentNation, localid;
+let chk, dossed;
+async function initialize() {
+    [[currentNation, localid], [chk, dossed]] = await Promise.all([
+        getLocalId(),
+        getChkDoss(),
+    ]);
+}
 function createElement(tagName, properties) {
     return Object.assign(document.createElement(tagName), properties);
 }
@@ -74,116 +90,6 @@ async function fetchNS(pathname, searchParams = "", options = {}) {
     options.redirect = "manual";
     return fetch(resource, options);
 }
-/* VARIABLES */
-let currentNation, localid;
-let chk, dossed;
-let disableKeybinds = false;
-async function initialize() {
-    [[currentNation, localid], [chk, dossed]] = await Promise.all([
-        getLocalId(),
-        getChkDoss(),
-    ]);
-}
-/* INITIALIZATION */
-initialize().then(() => {
-    if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
-        quickEndo();
-    }
-    else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
-        quickDoss();
-    }
-});
-/* QUICK ENDO */
-async function quickEndo() {
-    let happenings = document.querySelectorAll("li[id^='happening-']");
-    happenings.forEach((happening) => {
-        if (happening.textContent.includes("was admitted to the World Assembly") ||
-            happening.textContent.includes("endorsed")) {
-            let nation = happening
-                .querySelector(".nnameblock")
-                .textContent.toLowerCase()
-                .replaceAll(" ", "_");
-            if (nation !== currentNation) {
-                let button = createElement("button", {
-                    textContent: "Endo",
-                    id: nation,
-                });
-                button.dataset.action = "endorse";
-                happening.querySelector(".nlink").after(button);
-                button.addEventListener("click", () => {
-                    document
-                        .querySelectorAll("button")
-                        .forEach((button) => (button.disabled = true));
-                    endo(nation).then(() => {
-                        document
-                            .querySelectorAll(`[id="${nation}"]`)
-                            .forEach((button) => button.classList.add("endorsed"));
-                        document
-                            .querySelectorAll("button:not(.endorsed)")
-                            .forEach((button) => (button.disabled = false));
-                    });
-                });
-            }
-        }
-    });
-}
-/* QUICK DOSS */
-async function quickDoss() {
-    document.querySelectorAll("a.nlink").forEach((link) => {
-        let nation = link
-            .querySelector(".nnameblock")
-            .textContent.toLowerCase()
-            .replaceAll(" ", "_");
-        let button = createElement("button", {
-            textContent: "Doss",
-            id: nation,
-            disabled: dossed.includes(nation),
-        });
-        button.dataset.action = "doss";
-        if (dossed.includes(nation)) {
-            button.classList.add("dossed");
-        }
-        link.after(button);
-        button.addEventListener("click", () => {
-            document
-                .querySelectorAll("button")
-                .forEach((button) => (button.disabled = true));
-            doss(nation).then(() => {
-                document
-                    .querySelectorAll(`[id="${nation}"]`)
-                    .forEach((button) => button.classList.add("dossed"));
-                document
-                    .querySelectorAll("button:not(.dossed)")
-                    .forEach((button) => (button.disabled = false));
-            });
-        });
-    });
-}
-/* REPORTS LOAD TIME */
-if (location.pathname.includes("page=reports")) {
-    function timePerformance() {
-        const duration = performance.getEntriesByType("navigation")[0].duration;
-        if (!duration) {
-            setTimeout(timePerformance, 0);
-        }
-        else {
-            document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
-        }
-    }
-    timePerformance();
-}
-/* REPLACE AJAX2 LINKS */
-if (location.pathname.includes("page=ajax2")) {
-    document
-        .querySelectorAll("a.rlink, a.nlink")
-        .forEach((link) => {
-        link.href = `/template-overall=none/${link.getAttribute("href")}`;
-    });
-}
-/* SCROLLING */
-window.addEventListener("beforeunload", () => {
-    window.scrollTo(0, 0);
-});
 /* REQUESTS */
 async function getChkDoss() {
     const response = await (await fetchNS("template-overall=none/page=dossier")).text();
@@ -298,6 +204,7 @@ async function appointRO(region) {
         body: data,
     });
 }
+
 function addCSS(css) {
     document.head.appendChild(document.createElement("style")).innerHTML = css;
 }
@@ -478,18 +385,20 @@ const nationStyles = /*css*/ `
 `;
 if ((location.pathname.includes("template-overall=none") ||
     location.pathname.includes("page=ajax2")) &&
-    !location.pathname.includes("page=blank")) {
-    document.head.append(!document.querySelectorAll('meta[name="viewport"]').length &&
-        createElement("meta", {
-            name: "viewport",
-            content: "width=device-width,initial-scale=1.0",
-        }));
+    !location.pathname.includes("page=blank") &&
+    !document.querySelectorAll('meta[name="viewport"]').length) {
+    createElement("meta", {
+        name: "viewport",
+        content: "width=device-width,initial-scale=1.0",
+    });
     addCSS(styles);
 }
 if (location.pathname.includes("template-overall=none") &&
     location.pathname.includes("nation=")) {
     addCSS(nationStyles);
 }
+
+let disableKeybinds = false;
 /* KEYBINDS */
 document.addEventListener("keydown", (event) => {
     if (event.key === " " && event.target === document.body) {
@@ -622,3 +531,107 @@ async function handleKeystroke(key) {
     }
     return true;
 }
+
+/* QUICK ENDO */
+async function quickEndo() {
+    let happenings = document.querySelectorAll("li[id^='happening-']");
+    happenings.forEach((happening) => {
+        if (happening.textContent?.includes("was admitted to the World Assembly") ||
+            happening.textContent?.includes("endorsed")) {
+            let nation = happening
+                ?.querySelector(".nnameblock")
+                .textContent.toLowerCase()
+                .replaceAll(" ", "_");
+            if (nation !== currentNation) {
+                let button = createElement("button", {
+                    textContent: "Endo",
+                    id: nation,
+                });
+                button.dataset.action = "endorse";
+                happening.querySelector(".nlink").after(button);
+                button.addEventListener("click", () => {
+                    document
+                        .querySelectorAll("button")
+                        .forEach((button) => (button.disabled = true));
+                    endo(nation).then(() => {
+                        document
+                            .querySelectorAll(`[id="${nation}"]`)
+                            .forEach((button) => button.classList.add("endorsed"));
+                        document
+                            .querySelectorAll("button:not(.endorsed)")
+                            .forEach((button) => (button.disabled = false));
+                    });
+                });
+            }
+        }
+    });
+}
+/* QUICK DOSS */
+async function quickDoss() {
+    document.querySelectorAll("a.nlink").forEach((link) => {
+        let nation = link
+            .querySelector(".nnameblock")
+            .textContent.toLowerCase()
+            .replaceAll(" ", "_");
+        let button = createElement("button", {
+            textContent: "Doss",
+            id: nation,
+            disabled: dossed.includes(nation),
+        });
+        button.dataset.action = "doss";
+        if (dossed.includes(nation)) {
+            button.classList.add("dossed");
+        }
+        link.after(button);
+        button.addEventListener("click", () => {
+            document
+                .querySelectorAll("button")
+                .forEach((button) => (button.disabled = true));
+            doss(nation).then(() => {
+                document
+                    .querySelectorAll(`[id="${nation}"]`)
+                    .forEach((button) => button.classList.add("dossed"));
+                document
+                    .querySelectorAll("button:not(.dossed)")
+                    .forEach((button) => (button.disabled = false));
+            });
+        });
+    });
+}
+/* REPORTS LOAD TIME */
+function showLoadTime() {
+    function timePerformance() {
+        const duration = performance.getEntriesByType("navigation")[0].duration;
+        if (!duration) {
+            setTimeout(timePerformance, 0);
+        }
+        else {
+            document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
+        }
+    }
+    if (location.pathname.includes("page=reports")) {
+        timePerformance();
+    }
+}
+/* REPLACE AJAX2 LINKS */
+if (location.pathname.includes("page=ajax2")) {
+    document
+        .querySelectorAll("a.rlink, a.nlink")
+        .forEach((link) => {
+        link.href = `/template-overall=none/${link.getAttribute("href")}`;
+    });
+}
+/* SCROLLING */
+window.addEventListener("beforeunload", () => {
+    window.scrollTo(0, 0);
+});
+
+initialize().then(() => {
+    if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
+        quickEndo();
+    }
+    else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
+        quickDoss();
+    }
+    showLoadTime();
+});

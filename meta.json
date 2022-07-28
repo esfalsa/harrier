@@ -1,0 +1,9 @@
+{
+	"namespace": "github.com/esfalsa",
+	"match": "*://*.nationstates.net/*",
+	"run-at": "document-start",
+	"grant": ["none"],
+	"updateURL": "https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js",
+	"downloadURL": "https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js",
+	"homepageURL": "https://esfalsa.github.io/harrier/"
+}

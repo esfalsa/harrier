@@ -1,14 +1,7 @@
-// ==UserScript==
-// @name          Harrier
-// @namespace     https://esfalsa.github.io
-// @description   Keybinds for NationStates.
-// @match         *://*.nationstates.net/*
-// @run-at        document-start
-// @icon          https://www.nationstates.net/favicon.ico
-// ==/UserScript==
+import * as pkg from "../package.json";
 
-const config = {
-	version: "0.1.0",
+export default {
+	version: pkg.version,
 	user: "Pronoun",
 	keybinds: {
 		reports: " ",
@@ -28,7 +21,7 @@ const config = {
 		reload: "n",
 		back: ",",
 		forward: ".",
-		dossPoints: ["d", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+		dossPoints: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
 	},
 	styles: {
 		backgroundColor: "#f9f9f9",

@@ -1,3 +1,15 @@
+import config from "./config";
+import {
+	applyWA,
+	appointRO,
+	clearDossier,
+	currentNation,
+	move,
+	resignWA,
+} from "./utils";
+
+let disableKeybinds = false;
+
 /* KEYBINDS */
 document.addEventListener("keydown", (event) => {
 	if (event.key === " " && event.target === document.body) {

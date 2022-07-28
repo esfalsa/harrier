@@ -12,14 +12,14 @@
 
 ## Local Development
 
-### Harrier
+### Build Harrier
 
 1. Clone the repository: `git clone https://github.com/esfalsa/harrier.git`.
 2. Install dependencies: `npm install`.
 3. Edit source files in `src/`.
-4. Compile code: `npm run build` or `npm run watch`.
+4. Compile code: `npm run build` or `npm run start`.
 
-### Documentation
+### Run Documentation Locally
 
 1. Open the documentation folder: `cd docs`.
 2. Install Ruby dependencies: `bundle install`.

@@ -1,3 +1,6 @@
+import config from "./config";
+import { createElement } from "./utils";
+
 function addCSS(css: string) {
 	document.head.appendChild(document.createElement("style")).innerHTML = css;
 }
@@ -184,16 +187,13 @@ const nationStyles = /*css*/ `
 if (
 	(location.pathname.includes("template-overall=none") ||
 		location.pathname.includes("page=ajax2")) &&
-	!location.pathname.includes("page=blank")
+	!location.pathname.includes("page=blank") &&
+	!document.querySelectorAll('meta[name="viewport"]').length
 ) {
-	document.head.append(
-		!document.querySelectorAll('meta[name="viewport"]').length &&
-			createElement("meta", {
-				name: "viewport",
-				content: "width=device-width,initial-scale=1.0",
-			}),
-	);
-
+	createElement("meta", {
+		name: "viewport",
+		content: "width=device-width,initial-scale=1.0",
+	});
 	addCSS(styles);
 }
 
