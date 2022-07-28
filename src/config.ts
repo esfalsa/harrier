@@ -31,6 +31,8 @@ export default {
 		regionColor: "#a626a4",
 		nationColor: "#4078f2",
 		linkColor: "#4078f2",
+		successColor: "#50a14f",
+		errorColor: "#e45649",
 		dark: {
 			backgroundColor: "#282c34",
 			textColor: "#ABB2BF",
@@ -39,6 +41,8 @@ export default {
 			regionColor: "#c678dd",
 			nationColor: "#61afef",
 			linkColor: "#61afef",
+			successColor: "#98c379",
+			errorColor: "#e06c75",
 		},
 	},
 	officerName: "SPSF",

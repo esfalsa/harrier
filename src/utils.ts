@@ -3,8 +3,6 @@ import config from "./config";
 export let currentNation: string, localid: string;
 export let chk: string, dossed: string[];
 
-export let disableKeybinds = false;
-
 export async function initialize() {
 	[[currentNation, localid], [chk, dossed]] = await Promise.all([
 		getLocalId(),
@@ -186,4 +184,34 @@ export async function appointRO(region: string | Blob) {
 		},
 		body: data,
 	});
+}
+
+document.body.appendChild(
+	createElement("div", {
+		id: "toast-container",
+	}),
+);
+
+export function showToast(text, styles = []) {
+	const toast = createElement("div", {
+		textContent: text,
+		className: ["toast", ...styles].join(" "),
+	});
+	toast.style.maxHeight = "0";
+	toast.style.paddingTop = "0";
+	toast.style.paddingBottom = "0";
+	toast.style.opacity = "0";
+	toast.style.marginBottom = "0";
+
+	document.querySelector("#toast-container").prepend(toast);
+	setTimeout(() => {
+		toast.removeAttribute("style");
+	}, 100);
+
+	setTimeout(() => {
+		toast.style.opacity = "0";
+		setTimeout(() => {
+			toast.remove();
+		}, 1500);
+	}, 1500);
 }

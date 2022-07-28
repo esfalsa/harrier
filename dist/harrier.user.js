@@ -45,6 +45,8 @@ var config = {
         regionColor: "#a626a4",
         nationColor: "#4078f2",
         linkColor: "#4078f2",
+        successColor: "#50a14f",
+        errorColor: "#e45649",
         dark: {
             backgroundColor: "#282c34",
             textColor: "#ABB2BF",
@@ -53,6 +55,8 @@ var config = {
             regionColor: "#c678dd",
             nationColor: "#61afef",
             linkColor: "#61afef",
+            successColor: "#98c379",
+            errorColor: "#e06c75",
         },
     },
     officerName: "SPSF",
@@ -204,6 +208,30 @@ async function appointRO(region) {
         body: data,
     });
 }
+document.body.appendChild(createElement("div", {
+    id: "toast-container",
+}));
+function showToast(text, styles = []) {
+    const toast = createElement("div", {
+        textContent: text,
+        className: ["toast", ...styles].join(" "),
+    });
+    toast.style.maxHeight = "0";
+    toast.style.paddingTop = "0";
+    toast.style.paddingBottom = "0";
+    toast.style.opacity = "0";
+    toast.style.marginBottom = "0";
+    document.querySelector("#toast-container").prepend(toast);
+    setTimeout(() => {
+        toast.removeAttribute("style");
+    }, 100);
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => {
+            toast.remove();
+        }, 1500);
+    }, 1500);
+}
 
 function addCSS(css) {
     document.head.appendChild(document.createElement("style")).innerHTML = css;
@@ -218,6 +246,8 @@ const styles = /*css*/ `
   --region-color: ${config.styles.regionColor};
   --nation-color: ${config.styles.nationColor};
   --link-color: ${config.styles.linkColor};
+  --success-color: ${config.styles.successColor};
+  --error-color: ${config.styles.errorColor};
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -238,9 +268,50 @@ ${config.styles?.dark &&
     --region-color: ${config.styles.dark.regionColor};
     --nation-color: ${config.styles.dark.nationColor};
     --link-color: ${config.styles.dark.linkColor};
+    --success-color: ${config.styles.dark.successColor};
+    --error-color: ${config.styles.dark.errorColor};
   }
 }`}
 
+#toast-container {
+  z-index: 100;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.toast {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  transform: translate(0px, 0px);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
+  transition: 0.5s ease-in-out;
+  transition-property: all;
+  max-width: 50vw;
+  line-height: 1.2;
+  max-height: calc(1.2em + 1rem);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.toast.success {
+  background-color: var(--success-color);
+}
+
+.toast.error {
+  background-color: var(--error-color);
+}
+`;
+const templateStyles = /*css*/ `
 h1, h2, h3, h4, h5, h6 {
   color: var(--heading-color);
 }
@@ -383,6 +454,7 @@ const nationStyles = /*css*/ `
   display: none;
 }
 `;
+addCSS(styles);
 if ((location.pathname.includes("template-overall=none") ||
     location.pathname.includes("page=ajax2")) &&
     !location.pathname.includes("page=blank") &&
@@ -391,7 +463,7 @@ if ((location.pathname.includes("template-overall=none") ||
         name: "viewport",
         content: "width=device-width,initial-scale=1.0",
     });
-    addCSS(styles);
+    addCSS(templateStyles);
 }
 if (location.pathname.includes("template-overall=none") &&
     location.pathname.includes("nation=")) {
@@ -443,7 +515,7 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.moveJP) {
         move(config.jumpPoint).then(() => {
-            alert(`Moved back to ${config.jumpPointName}.`);
+            showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
         });
     }
     else if (key === config.keybinds.move) {
@@ -453,7 +525,7 @@ async function handleKeystroke(key) {
         else {
             let region = document.querySelector("li a.rlink:nth-of-type(3)").textContent;
             move(region.toLowerCase().replaceAll(" ", "_")).then(() => {
-                alert(`Moved to ${region}`);
+                showToast(`Moved to ${region}`, ["success"]);
             });
         }
     }
@@ -487,7 +559,7 @@ async function handleKeystroke(key) {
                 button.disabled = false;
                 button.classList.remove("dossed");
             });
-            alert("Cleared dossier.");
+            showToast("Cleared dossier.", ["success"]);
         });
     }
     else if (key === config.keybinds.appointRO &&
@@ -495,12 +567,12 @@ async function handleKeystroke(key) {
         const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
             .region;
         appointRO(region).then(() => {
-            alert(`Appointed ${currentNation} as RO in ${region}`);
+            showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
         });
     }
     else if (key === config.keybinds.apply) {
         applyWA().then(() => {
-            alert("Applied to the World Assembly.");
+            showToast("Applied to the World Assembly.", ["success"]);
         });
     }
     else if (key === config.keybinds.global) {
@@ -508,7 +580,7 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.resign) {
         resignWA().then(() => {
-            alert("Resigned from the World Assembly.");
+            showToast("Resigned from the World Assembly.", ["success"]);
         });
     }
     else if (key === config.keybinds.joinWA) {

@@ -3,7 +3,7 @@ import "./utils";
 import "./styles";
 import "./keybinds";
 import { showLoadTime, quickDoss, quickEndo } from "./main";
-import { initialize } from "./utils";
+import { initialize, showToast } from "./utils";
 
 initialize().then(() => {
 	if (

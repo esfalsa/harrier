@@ -15,6 +15,8 @@ const styles = /*css*/ `
   --region-color: ${config.styles.regionColor};
   --nation-color: ${config.styles.nationColor};
   --link-color: ${config.styles.linkColor};
+  --success-color: ${config.styles.successColor};
+  --error-color: ${config.styles.errorColor};
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -36,10 +38,52 @@ ${
     --region-color: ${config.styles.dark.regionColor};
     --nation-color: ${config.styles.dark.nationColor};
     --link-color: ${config.styles.dark.linkColor};
+    --success-color: ${config.styles.dark.successColor};
+    --error-color: ${config.styles.dark.errorColor};
   }
 }`
 }
 
+#toast-container {
+  z-index: 100;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.toast {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  transform: translate(0px, 0px);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
+  transition: 0.5s ease-in-out;
+  transition-property: all;
+  max-width: 50vw;
+  line-height: 1.2;
+  max-height: calc(1.2em + 1rem);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.toast.success {
+  background-color: var(--success-color);
+}
+
+.toast.error {
+  background-color: var(--error-color);
+}
+`;
+
+const templateStyles = /*css*/ `
 h1, h2, h3, h4, h5, h6 {
   color: var(--heading-color);
 }
@@ -184,6 +228,8 @@ const nationStyles = /*css*/ `
 }
 `;
 
+addCSS(styles);
+
 if (
 	(location.pathname.includes("template-overall=none") ||
 		location.pathname.includes("page=ajax2")) &&
@@ -194,7 +240,7 @@ if (
 		name: "viewport",
 		content: "width=device-width,initial-scale=1.0",
 	});
-	addCSS(styles);
+	addCSS(templateStyles);
 }
 
 if (

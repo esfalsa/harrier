@@ -6,6 +6,7 @@ import {
 	currentNation,
 	move,
 	resignWA,
+	showToast,
 } from "./utils";
 
 let disableKeybinds = false;
@@ -62,7 +63,7 @@ async function handleKeystroke(key: string) {
 		);
 	} else if (key === config.keybinds.moveJP) {
 		move(config.jumpPoint).then(() => {
-			alert(`Moved back to ${config.jumpPointName}.`);
+			showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
 		});
 	} else if (key === config.keybinds.move) {
 		if (location.pathname.includes("/region=")) {
@@ -74,7 +75,7 @@ async function handleKeystroke(key: string) {
 				"li a.rlink:nth-of-type(3)",
 			).textContent;
 			move(region.toLowerCase().replaceAll(" ", "_")).then(() => {
-				alert(`Moved to ${region}`);
+				showToast(`Moved to ${region}`, ["success"]);
 			});
 		}
 	} else if (key === config.keybinds.endorse) {
@@ -125,7 +126,7 @@ async function handleKeystroke(key: string) {
 					button.disabled = false;
 					button.classList.remove("dossed");
 				});
-			alert("Cleared dossier.");
+			showToast("Cleared dossier.", ["success"]);
 		});
 	} else if (
 		key === config.keybinds.appointRO &&
@@ -134,17 +135,17 @@ async function handleKeystroke(key: string) {
 		const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
 			.region;
 		appointRO(region).then(() => {
-			alert(`Appointed ${currentNation} as RO in ${region}`);
+			showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
 		});
 	} else if (key === config.keybinds.apply) {
 		applyWA().then(() => {
-			alert("Applied to the World Assembly.");
+			showToast("Applied to the World Assembly.", ["success"]);
 		});
 	} else if (key === config.keybinds.global) {
 		location.assign("/page=ajax2/a=reports/view=world/filter=change");
 	} else if (key === config.keybinds.resign) {
 		resignWA().then(() => {
-			alert("Resigned from the World Assembly.");
+			showToast("Resigned from the World Assembly.", ["success"]);
 		});
 	} else if (key === config.keybinds.joinWA) {
 		(
