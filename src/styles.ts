@@ -24,7 +24,12 @@ function addCSS(css: string) {
 addCSS(generalStyles);
 
 if (!document.querySelectorAll('meta[name="viewport"]').length) {
-	addCSS(templateStyles);
+	document.head.append(
+		createElement("meta", {
+			name: "viewport",
+			content: "width=device-width,initial-scale=1.0",
+		}),
+	);
 }
 
 if (

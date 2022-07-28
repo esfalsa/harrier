@@ -257,7 +257,10 @@ function addCSS(css) {
 }
 addCSS(css);
 if (!document.querySelectorAll('meta[name="viewport"]').length) {
-    addCSS(css$2);
+    document.head.append(createElement("meta", {
+        name: "viewport",
+        content: "width=device-width,initial-scale=1.0",
+    }));
 }
 if ((location.pathname.includes("template-overall=none") ||
     location.pathname.includes("page=ajax2")) &&
