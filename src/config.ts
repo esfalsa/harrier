@@ -1,6 +1,64 @@
 import * as pkg from "../package.json";
 
-export default {
+type Config = {
+	version: string;
+	user: string;
+	keybinds: {
+		reports: string;
+		updated: string;
+		toggle: string;
+		moveJP: string;
+		move: string;
+		endorse: string;
+		doss: string;
+		appointRO: string;
+		global: string;
+		viewDossier: string;
+		clearDossier: string;
+		apply: string;
+		resign: string;
+		prep: string;
+		joinWA: string;
+		reload: string;
+		back: string;
+		forward: string;
+		copy: string;
+		endoActivity: string;
+		dossPoints: string[];
+	};
+	styles: {
+		light: {
+			backgroundColor: string;
+			textColor: string;
+			headingColor: string;
+			linkBackground: string;
+			regionColor: string;
+			nationColor: string;
+			linkColor: string;
+			successColor: string;
+			errorColor: string;
+		};
+		dark: {
+			backgroundColor: string;
+			textColor: string;
+			headingColor: string;
+			linkBackground: string;
+			regionColor: string;
+			nationColor: string;
+			linkColor: string;
+			successColor: string;
+			errorColor: string;
+		};
+	};
+	officerName: string;
+	jumpPointName: string;
+	dossPointNames: string[];
+	userAgent: string;
+	jumpPoint: string;
+	dossPoints: string[];
+};
+
+const config: Config = {
 	version: pkg.version,
 	user: "Pronoun",
 	keybinds: {
@@ -54,14 +112,16 @@ export default {
 	jumpPointName: "Artificial Solar System",
 	dossPointNames: ["Suspicious", "The Allied Nations of Egalaria"],
 	get userAgent() {
-		return `Script: Harrier v${this.version}; User: ${this.user}; Script author: Pronoun (esfalsa.github.io)`;
+		return `Script: Harrier v${config.version}; User: ${config.user}; Script author: Pronoun (esfalsa.github.io)`;
 	},
-	get jumpPoint() {
-		return this.jumpPointName.toLowerCase().replaceAll(" ", "_");
+	get jumpPoint(): string {
+		return config.jumpPointName.toLowerCase().replaceAll(" ", "_");
 	},
 	get dossPoints() {
-		return this.dossPointNames.map((name) =>
+		return config.dossPointNames.map((name) =>
 			name.toLowerCase().replaceAll(" ", "_"),
 		);
 	},
 };
+
+export default config;

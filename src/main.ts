@@ -4,13 +4,11 @@ import {
 	doss,
 	dossed,
 	endo,
-	getChkDoss,
-	getLocalId,
 	showToast,
 } from "./utils";
 
 /* QUICK ENDO */
-export async function quickEndo(nation) {
+export async function quickEndo(nation: string) {
 	document
 		.querySelectorAll("button")
 		.forEach((button) => (button.disabled = true));
@@ -24,28 +22,28 @@ export async function quickEndo(nation) {
 		.forEach((button: HTMLButtonElement) => (button.disabled = false));
 }
 
-export async function initializeQuickEndo() {
-	let happenings = document.querySelectorAll("li[id^='happening-']");
+export function initializeQuickEndo() {
+	const happenings = document.querySelectorAll("li[id^='happening-']");
 
 	happenings.forEach((happening) => {
 		if (
 			happening.textContent?.includes("was admitted to the World Assembly") ||
 			happening.textContent?.includes("endorsed")
 		) {
-			let nation = happening
+			const nation = happening
 				?.querySelector(".nnameblock")
 				.textContent.toLowerCase()
 				.replaceAll(" ", "_");
 
 			if (nation !== currentNation) {
-				let button = createElement("button", {
+				const button = createElement("button", {
 					textContent: "Endo",
 					id: nation,
 				});
 				button.dataset.action = "endorse";
 				happening.querySelector(".nlink").after(button);
 				button.addEventListener("click", () => {
-					quickEndo(nation);
+					void quickEndo(nation);
 				});
 			}
 		}
@@ -68,13 +66,13 @@ export async function quickDoss(nation: string) {
 		.forEach((button: HTMLButtonElement) => (button.disabled = false));
 }
 
-export async function initializeQuickDoss() {
+export function initializeQuickDoss() {
 	document.querySelectorAll("a.nlink").forEach((link) => {
-		let nation = link
+		const nation = link
 			.querySelector(".nnameblock")
 			.textContent.toLowerCase()
 			.replaceAll(" ", "_");
-		let button = createElement("button", {
+		const button = createElement("button", {
 			textContent: "Doss",
 			id: nation,
 			disabled: dossed.includes(nation),
@@ -85,7 +83,7 @@ export async function initializeQuickDoss() {
 		}
 		link.after(button);
 		button.addEventListener("click", () => {
-			quickDoss(nation);
+			void quickDoss(nation);
 		});
 	});
 }

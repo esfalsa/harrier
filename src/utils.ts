@@ -12,7 +12,7 @@ export async function initialize() {
 
 export function createElement(
 	tagName: string,
-	properties: Record<string, any>,
+	properties: Record<string, string>,
 ) {
 	return Object.assign(document.createElement(tagName), properties);
 }
@@ -22,9 +22,9 @@ export async function fetchNS(
 	searchParams:
 		| string
 		| string[][]
-		| Record<string, any>
+		| Record<string, string>
 		| URLSearchParams = "",
-	options: Record<string, any> = {},
+	options: RequestInit = {},
 ) {
 	const search = new URLSearchParams(searchParams);
 	search.append("user-agent", config.userAgent);
@@ -44,9 +44,9 @@ export async function fetchNS(
 
 export async function postNS(
 	endpoint: string | URL,
-	data: { [s: string]: string },
+	data: Record<string, string>,
 ) {
-	let payload = new FormData();
+	const payload = new FormData();
 
 	for (const [key, value] of Object.entries(data)) {
 		payload.append(key, value);
@@ -81,7 +81,7 @@ export async function getChkDoss(): Promise<[string, string[]]> {
 }
 
 export async function getLocalId() {
-	let response = await (
+	const response = await (
 		await fetchNS("template-overall=none/page=create_region")
 	).text();
 
@@ -162,7 +162,7 @@ document.body.appendChild(
 	}),
 );
 
-export function showToast(text, styles = []) {
+export function showToast(text: string, styles: string[] = []) {
 	const toast = createElement("div", {
 		textContent: text,
 		className: ["toast", ...styles].join(" "),

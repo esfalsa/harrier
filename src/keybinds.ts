@@ -75,11 +75,12 @@ async function handleKeystroke(key: string) {
 		movedBack = true;
 	} else if (key === config.keybinds.move) {
 		if (location.pathname.includes("/region=")) {
-			(
-				document.querySelector("button[name=move_region]") as HTMLButtonElement
-			).click();
+			const moveButton: HTMLElement = document.querySelector(
+				"button[name=move_region]",
+			);
+			moveButton.click();
 		} else {
-			let region = document.querySelector(
+			const region = document.querySelector(
 				"li a.rlink:nth-of-type(3)",
 			).textContent;
 			await move(region.toLowerCase().replaceAll(" ", "_"));
@@ -87,7 +88,9 @@ async function handleKeystroke(key: string) {
 		}
 	} else if (key === config.keybinds.endorse) {
 		if (location.pathname.includes("/nation=")) {
-			(document.querySelector("button.endorse") as HTMLButtonElement).click();
+			const endorseButton: HTMLElement =
+				document.querySelector("button.endorse");
+			endorseButton.click();
 		} else if (
 			/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(
 				location.pathname,
@@ -102,11 +105,10 @@ async function handleKeystroke(key: string) {
 		key === config.keybinds.doss &&
 		location.pathname.includes("/nation=")
 	) {
-		(
-			document.querySelector(
-				"button[name=action][value=add]",
-			) as HTMLButtonElement
-		).click();
+		const dossButton: HTMLElement = document.querySelector(
+			"button[name=action][value=add]",
+		);
+		dossButton.click();
 	} else if (
 		key === config.keybinds.doss &&
 		/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(
@@ -173,11 +175,10 @@ async function handleKeystroke(key: string) {
 			showToast("Already prepped.");
 		}
 	} else if (key === config.keybinds.joinWA) {
-		(
-			document.querySelector(
-				"form[action='/cgi-bin/join_un.cgi'] button[type='submit']",
-			) as HTMLButtonElement
-		).click();
+		const joinButton: HTMLElement = document.querySelector(
+			"form[action='/cgi-bin/join_un.cgi'] button[type='submit']",
+		);
+		joinButton.click();
 	} else if (key === config.keybinds.reload) {
 		location.reload();
 	} else if (key === config.keybinds.back) {
@@ -185,7 +186,7 @@ async function handleKeystroke(key: string) {
 	} else if (key === config.keybinds.forward) {
 		history.forward();
 	} else if (key === config.keybinds.copy) {
-		navigator.clipboard.writeText(location.href);
+		await navigator.clipboard.writeText(location.href);
 	} else if (key === config.keybinds.endoActivity) {
 		location.assign(
 			`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,
