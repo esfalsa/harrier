@@ -17,6 +17,7 @@ export default {
 		clearDossier: "x",
 		apply: "[",
 		resign: "]",
+		prep: "p",
 		joinWA: "Enter",
 		reload: "n",
 		back: ",",

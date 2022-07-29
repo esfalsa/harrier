@@ -31,6 +31,7 @@ var config = {
         clearDossier: "x",
         apply: "[",
         resign: "]",
+        prep: "p",
         joinWA: "Enter",
         reload: "n",
         back: ",",
@@ -342,6 +343,11 @@ window.addEventListener("beforeunload", () => {
 });
 
 let disableKeybinds = false;
+// track prep progress
+let resigned = false;
+let applied = false;
+let dossCleared = false;
+let movedBack = false;
 /* KEYBINDS */
 document.addEventListener("keydown", (event) => {
     if (event.key === " " && event.target === document.body) {
@@ -388,6 +394,7 @@ async function handleKeystroke(key) {
     else if (key === config.keybinds.moveJP) {
         await move(config.jumpPoint);
         showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
+        movedBack = true;
     }
     else if (key === config.keybinds.move) {
         if (location.pathname.includes("/region=")) {
@@ -428,6 +435,7 @@ async function handleKeystroke(key) {
             button.classList.remove("dossed");
         });
         showToast("Cleared dossier.", ["success"]);
+        dossCleared = true;
     }
     else if (key === config.keybinds.appointRO &&
         location.pathname.includes("/region=")) {
@@ -436,16 +444,49 @@ async function handleKeystroke(key) {
         await appointRO(region);
         showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
     }
+    else if (key === config.keybinds.global) {
+        location.assign("/page=ajax2/a=reports/view=world/filter=change");
+    }
     else if (key === config.keybinds.apply) {
         await applyWA();
         showToast("Applied to the World Assembly.", ["success"]);
-    }
-    else if (key === config.keybinds.global) {
-        location.assign("/page=ajax2/a=reports/view=world/filter=change");
+        applied = true;
     }
     else if (key === config.keybinds.resign) {
         await resignWA();
         showToast("Resigned from the World Assembly.", ["success"]);
+        resigned = true;
+    }
+    else if (key === config.keybinds.prep) {
+        if (!resigned) {
+            await resignWA();
+            showToast("Resigned from the World Assembly.", ["success"]);
+            resigned = true;
+        }
+        else if (!applied) {
+            await applyWA();
+            showToast("Applied to the World Assembly.", ["success"]);
+            applied = true;
+        }
+        else if (!dossCleared) {
+            await clearDossier();
+            document
+                .querySelectorAll("button.dossed")
+                .forEach((button) => {
+                button.disabled = false;
+                button.classList.remove("dossed");
+            });
+            showToast("Cleared dossier.", ["success"]);
+            dossCleared = true;
+        }
+        else if (!movedBack) {
+            await move(config.jumpPoint);
+            showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
+            movedBack = true;
+        }
+        else {
+            showToast("Already prepped.");
+        }
     }
     else if (key === config.keybinds.joinWA) {
         document.querySelector("form[action='/cgi-bin/join_un.cgi'] button[type='submit']").click();
