@@ -7,14 +7,14 @@
 // @updateURL   https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
 // @downloadURL https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
 // @homepageURL https://esfalsa.github.io/harrier/
-// @version     0.1.0
+// @version     0.2.0
 // @author      Pronoun
 // @license     AGPL-3.0-or-later
 // @grant       none
 // ==/UserScript==
-var version = "0.1.0";
+var version = "0.2.0";
 
-var config = {
+const config = {
     version: version,
     user: "Pronoun",
     keybinds: {
@@ -68,13 +68,13 @@ var config = {
     jumpPointName: "Artificial Solar System",
     dossPointNames: ["Suspicious", "The Allied Nations of Egalaria"],
     get userAgent() {
-        return `Script: Harrier v${this.version}; User: ${this.user}; Script author: Pronoun (esfalsa.github.io)`;
+        return `Script: Harrier v${config.version}; User: ${config.user}; Script author: Pronoun (esfalsa.github.io)`;
     },
     get jumpPoint() {
-        return this.jumpPointName.toLowerCase().replaceAll(" ", "_");
+        return config.jumpPointName.toLowerCase().replaceAll(" ", "_");
     },
     get dossPoints() {
-        return this.dossPointNames.map((name) => name.toLowerCase().replaceAll(" ", "_"));
+        return config.dossPointNames.map((name) => name.toLowerCase().replaceAll(" ", "_"));
     },
 };
 
@@ -86,7 +86,7 @@ async function initialize() {
         getChkDoss(),
     ]);
 }
-function createElement(tagName, properties) {
+function createElement(tagName, properties = {}) {
     return Object.assign(document.createElement(tagName), properties);
 }
 async function fetchNS(pathname, searchParams = "", options = {}) {
@@ -100,7 +100,7 @@ async function fetchNS(pathname, searchParams = "", options = {}) {
     return fetch(resource, options);
 }
 async function postNS(endpoint, data) {
-    let payload = new FormData();
+    const payload = new FormData();
     for (const [key, value] of Object.entries(data)) {
         payload.append(key, value);
     }
@@ -122,7 +122,7 @@ async function getChkDoss() {
     return [chk, dossed];
 }
 async function getLocalId() {
-    let response = await (await fetchNS("template-overall=none/page=create_region")).text();
+    const response = await (await fetchNS("template-overall=none/page=create_region")).text();
     return [
         response.match(/<a href="nation=(?<nation>.+)" class="nlink">/).groups
             .nation,
@@ -259,24 +259,24 @@ async function quickEndo(nation) {
         .querySelectorAll("button:not(.endorsed)")
         .forEach((button) => (button.disabled = false));
 }
-async function initializeQuickEndo() {
-    let happenings = document.querySelectorAll("li[id^='happening-']");
+function initializeQuickEndo() {
+    const happenings = document.querySelectorAll("li[id^='happening-']");
     happenings.forEach((happening) => {
         if (happening.textContent?.includes("was admitted to the World Assembly") ||
             happening.textContent?.includes("endorsed")) {
-            let nation = happening
+            const nation = happening
                 ?.querySelector(".nnameblock")
                 .textContent.toLowerCase()
                 .replaceAll(" ", "_");
             if (nation !== currentNation) {
-                let button = createElement("button", {
+                const button = createElement("button", {
                     textContent: "Endo",
                     id: nation,
                 });
                 button.dataset.action = "endorse";
                 happening.querySelector(".nlink").after(button);
                 button.addEventListener("click", () => {
-                    quickEndo(nation);
+                    void quickEndo(nation);
                 });
             }
         }
@@ -296,13 +296,13 @@ async function quickDoss(nation) {
         .querySelectorAll("button:not(.dossed)")
         .forEach((button) => (button.disabled = false));
 }
-async function initializeQuickDoss() {
+function initializeQuickDoss() {
     document.querySelectorAll("a.nlink").forEach((link) => {
-        let nation = link
+        const nation = link
             .querySelector(".nnameblock")
             .textContent.toLowerCase()
             .replaceAll(" ", "_");
-        let button = createElement("button", {
+        const button = createElement("button", {
             textContent: "Doss",
             id: nation,
             disabled: dossed.includes(nation),
@@ -313,7 +313,7 @@ async function initializeQuickDoss() {
         }
         link.after(button);
         button.addEventListener("click", () => {
-            quickDoss(nation);
+            void quickDoss(nation);
         });
     });
 }
@@ -399,17 +399,19 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.move) {
         if (location.pathname.includes("/region=")) {
-            document.querySelector("button[name=move_region]").click();
+            const moveButton = document.querySelector("button[name=move_region]");
+            moveButton.click();
         }
         else {
-            let region = document.querySelector("li a.rlink:nth-of-type(3)").textContent;
+            const region = document.querySelector("li a.rlink:nth-of-type(3)").textContent;
             await move(region.toLowerCase().replaceAll(" ", "_"));
             showToast(`Moved to ${region}`, ["success"]);
         }
     }
     else if (key === config.keybinds.endorse) {
         if (location.pathname.includes("/nation=")) {
-            document.querySelector("button.endorse").click();
+            const endorseButton = document.querySelector("button.endorse");
+            endorseButton.click();
         }
         else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
             await quickEndo(document.querySelector("button[data-action=endorse]:not([disabled])")
@@ -418,7 +420,8 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.doss &&
         location.pathname.includes("/nation=")) {
-        document.querySelector("button[name=action][value=add]").click();
+        const dossButton = document.querySelector("button[name=action][value=add]");
+        dossButton.click();
     }
     else if (key === config.keybinds.doss &&
         /\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
@@ -490,7 +493,8 @@ async function handleKeystroke(key) {
         }
     }
     else if (key === config.keybinds.joinWA) {
-        document.querySelector("form[action='/cgi-bin/join_un.cgi'] button[type='submit']").click();
+        const joinButton = document.querySelector("form[action='/cgi-bin/join_un.cgi'] button[type='submit']");
+        joinButton.click();
     }
     else if (key === config.keybinds.reload) {
         location.reload();
@@ -502,7 +506,7 @@ async function handleKeystroke(key) {
         history.forward();
     }
     else if (key === config.keybinds.copy) {
-        navigator.clipboard.writeText(location.href);
+        await navigator.clipboard.writeText(location.href);
     }
     else if (key === config.keybinds.endoActivity) {
         location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
@@ -516,11 +520,15 @@ async function handleKeystroke(key) {
     return true;
 }
 
-initialize().then(() => {
+initialize()
+    .then(() => {
     if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
         initializeQuickEndo();
     }
     else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
         initializeQuickDoss();
     }
+})
+    .catch((error) => {
+    console.error(error);
 });

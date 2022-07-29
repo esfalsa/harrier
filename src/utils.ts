@@ -12,7 +12,7 @@ export async function initialize() {
 
 export function createElement(
 	tagName: string,
-	properties: Record<string, string>,
+	properties: Record<string, string | boolean | number> = {},
 ) {
 	return Object.assign(document.createElement(tagName), properties);
 }
