@@ -35,6 +35,7 @@ var config = {
         reload: "n",
         back: ",",
         forward: ".",
+        endoActivity: "`",
         dossPoints: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     },
     styles: {
@@ -406,9 +407,6 @@ async function handleKeystroke(key) {
             await quickEndo(document.querySelector("button[data-action=endorse]:not([disabled])")
                 .id);
         }
-        else {
-            location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
-        }
     }
     else if (key === config.keybinds.doss &&
         location.pathname.includes("/nation=")) {
@@ -416,7 +414,7 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.doss &&
         /\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
-        await quickDoss(document.querySelector("button[data-action=endorse]:not([disabled])").id);
+        await quickDoss(document.querySelector("button[data-action=doss]:not([disabled])").id);
     }
     else if (key === config.keybinds.viewDossier) {
         location.assign("/template-overall=none/page=dossier");
@@ -460,6 +458,9 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.forward) {
         history.forward();
+    }
+    else if (key === config.keybinds.endoActivity) {
+        location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
     }
     else if (config.keybinds.dossPoints.includes(key)) {
         const index = config.keybinds.dossPoints.indexOf(key);

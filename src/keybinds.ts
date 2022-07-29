@@ -90,10 +90,6 @@ async function handleKeystroke(key: string) {
 				document.querySelector("button[data-action=endorse]:not([disabled])")
 					.id,
 			);
-		} else {
-			location.assign(
-				`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,
-			);
 		}
 	} else if (
 		key === config.keybinds.doss &&
@@ -111,7 +107,7 @@ async function handleKeystroke(key: string) {
 		)
 	) {
 		await quickDoss(
-			document.querySelector("button[data-action=endorse]:not([disabled])").id,
+			document.querySelector("button[data-action=doss]:not([disabled])").id,
 		);
 	} else if (key === config.keybinds.viewDossier) {
 		location.assign("/template-overall=none/page=dossier");
@@ -152,6 +148,10 @@ async function handleKeystroke(key: string) {
 		history.back();
 	} else if (key === config.keybinds.forward) {
 		history.forward();
+	} else if (key === config.keybinds.endoActivity) {
+		location.assign(
+			`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,
+		);
 	} else if (config.keybinds.dossPoints.includes(key)) {
 		const index = config.keybinds.dossPoints.indexOf(key);
 		if (index < config.dossPoints.length) {
