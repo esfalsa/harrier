@@ -184,6 +184,8 @@ async function handleKeystroke(key: string) {
 		history.back();
 	} else if (key === config.keybinds.forward) {
 		history.forward();
+	} else if (key === config.keybinds.copy) {
+		navigator.clipboard.writeText(location.href);
 	} else if (key === config.keybinds.endoActivity) {
 		location.assign(
 			`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,

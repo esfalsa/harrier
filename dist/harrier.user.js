@@ -36,6 +36,7 @@ var config = {
         reload: "n",
         back: ",",
         forward: ".",
+        copy: "=",
         endoActivity: "`",
         dossPoints: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     },
@@ -499,6 +500,9 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.forward) {
         history.forward();
+    }
+    else if (key === config.keybinds.copy) {
+        navigator.clipboard.writeText(location.href);
     }
     else if (key === config.keybinds.endoActivity) {
         location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
