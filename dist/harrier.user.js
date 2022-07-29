@@ -210,7 +210,7 @@ var css$2 = "h1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n\tcolor: var(--headingColor);\n}\n\n
 
 var css$1 = ".newmainlinebox {\n\tdisplay: inline-block;\n}\n\n.newmainlinebubble {\n\tdisplay: inline-flex;\n\tflex-direction: row;\n\tgap: 0.25rem;\n\talign-items: center;\n\tmargin-right: 1.5rem;\n}\n\n.newmainlinebubbletop {\n\tfont-weight: bold;\n}\n.newmainlinebubbletop::after {\n\tcontent: \":\";\n}\n\n.newmainlinebubblebottom[style] {\n\tcolor: transparent;\n\t-webkit-background-clip: text !important;\n\tbackground-clip: text;\n}\n\n.lineundercover,\n.newnonflagstuff {\n\tdisplay: flex;\n\tflex-direction: row;\n\talign-items: center;\n\tgap: 1rem;\n}\n\n.newtitlepretitle,\n.newtitlename,\n.newtitlecategory {\n\tdisplay: inline-block;\n\tfont-size: 1.5rem;\n}\n\n.newtitlename {\n\tfont-weight: bold;\n}\n\n.newtitlecategory {\n\topacity: 0.5;\n}\n\n.newtitlecategory::before {\n\tcontent: \"(\";\n}\n.newtitlecategory::after {\n\tcontent: \")\";\n}\n\n#nationcover,\n#badge_rack,\n#trophycabinet,\n.newsloganbox,\n.nationnavbar,\n.nationsummarybox,\n.nationsummary,\n.trophyline,\n#tgcompose,\n.newsbox > p.smalltext {\n\tdisplay: none;\n}\n";
 
-var css = ":root {\n\t--fontSans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,\n\t\t\"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif,\n\t\t\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n\t--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n\t--shadowInner: inset 0 2px 4px 0 rgb(0 0 0 / 0.075);\n\tfont-family: var(--fontSans);\n\tcolor: var(--textColor);\n}\n\n#toast-container {\n\tz-index: 100;\n\tfont-family: var(--fontSans);\n\tfont-size: 1rem;\n\tposition: fixed;\n\ttop: 1rem;\n\tright: 1rem;\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: flex-end;\n}\n\n.toast {\n\tbackground-color: var(--textColor);\n\tcolor: var(--backgroundColor);\n\ttransform: translate(0px, 0px);\n\tpadding: 0.5rem;\n\tborder-radius: 0.5rem;\n\tbox-shadow: var(--shadow);\n\ttransition: 0.5s ease-in-out;\n\ttransition-property: all;\n\tmax-width: 50vw;\n\tline-height: 1.2;\n\tmax-height: calc(1.2em + 1rem);\n\ttext-overflow: ellipsis;\n\toverflow: hidden;\n\twhite-space: nowrap;\n\tmargin-bottom: 0.5rem;\n}\n\n.toast.success {\n\tbackground-color: var(--successColor);\n}\n\n.toast.error {\n\tbackground-color: var(--errorColor);\n}\n";
+var css = ":root {\n\t--fontSans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,\n\t\t\"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif,\n\t\t\"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n\t--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n\t--shadowInner: inset 0 2px 4px 0 rgb(0 0 0 / 0.075);\n\tfont-family: var(--fontSans);\n\tcolor: var(--textColor);\n}\n\n#toast-container {\n\tz-index: 100;\n\tfont-family: var(--fontSans);\n\tfont-size: 1rem;\n\tposition: fixed;\n\ttop: 1rem;\n\tright: 1rem;\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: flex-end;\n}\n\n.toast {\n\tbackground-color: var(--textColor);\n\tcolor: var(--backgroundColor);\n\ttransform: translate(0px, 0px);\n\tpadding: 0.5rem;\n\tborder-radius: 0.5rem;\n\tbox-shadow: var(--shadow);\n\ttransition: 0.25s ease-in-out;\n\ttransition-property: all;\n\tmax-width: 50vw;\n\tline-height: 1.2;\n\tmax-height: calc(1.2em + 1rem);\n\ttext-overflow: ellipsis;\n\toverflow: hidden;\n\twhite-space: nowrap;\n\tmargin-bottom: 0.5rem;\n}\n\n.toast.success {\n\tbackground-color: var(--successColor);\n}\n\n.toast.error {\n\tbackground-color: var(--errorColor);\n}\n";
 
 const root = document.documentElement.style;
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -243,6 +243,103 @@ if (location.pathname.includes("template-overall=none") &&
     addCSS(css$1);
 }
 
+/* QUICK ENDO */
+async function quickEndo(nation) {
+    document
+        .querySelectorAll("button")
+        .forEach((button) => (button.disabled = true));
+    await endo(nation);
+    document
+        .querySelectorAll(`[id="${nation}"]`)
+        .forEach((button) => button.classList.add("endorsed"));
+    document
+        .querySelectorAll("button:not(.endorsed)")
+        .forEach((button) => (button.disabled = false));
+}
+async function initializeQuickEndo() {
+    let happenings = document.querySelectorAll("li[id^='happening-']");
+    happenings.forEach((happening) => {
+        if (happening.textContent?.includes("was admitted to the World Assembly") ||
+            happening.textContent?.includes("endorsed")) {
+            let nation = happening
+                ?.querySelector(".nnameblock")
+                .textContent.toLowerCase()
+                .replaceAll(" ", "_");
+            if (nation !== currentNation) {
+                let button = createElement("button", {
+                    textContent: "Endo",
+                    id: nation,
+                });
+                button.dataset.action = "endorse";
+                happening.querySelector(".nlink").after(button);
+                button.addEventListener("click", () => {
+                    quickEndo(nation);
+                });
+            }
+        }
+    });
+}
+/* QUICK DOSS */
+async function quickDoss(nation) {
+    document
+        .querySelectorAll("button")
+        .forEach((button) => (button.disabled = true));
+    await doss(nation);
+    showToast(`Added ${nation} to dossier`, ["success"]);
+    document
+        .querySelectorAll(`[id="${nation}"]`)
+        .forEach((button) => button.classList.add("dossed"));
+    document
+        .querySelectorAll("button:not(.dossed)")
+        .forEach((button) => (button.disabled = false));
+}
+async function initializeQuickDoss() {
+    document.querySelectorAll("a.nlink").forEach((link) => {
+        let nation = link
+            .querySelector(".nnameblock")
+            .textContent.toLowerCase()
+            .replaceAll(" ", "_");
+        let button = createElement("button", {
+            textContent: "Doss",
+            id: nation,
+            disabled: dossed.includes(nation),
+        });
+        button.dataset.action = "doss";
+        if (dossed.includes(nation)) {
+            button.classList.add("dossed");
+        }
+        link.after(button);
+        button.addEventListener("click", () => {
+            quickDoss(nation);
+        });
+    });
+}
+/* REPORTS LOAD TIME */
+function timePerformance() {
+    const duration = performance.getEntriesByType("navigation")[0].duration;
+    if (!duration) {
+        setTimeout(timePerformance, 0);
+    }
+    else {
+        document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
+    }
+}
+if (location.pathname.includes("page=reports")) {
+    timePerformance();
+}
+/* REPLACE AJAX2 LINKS */
+if (location.pathname.includes("page=ajax2")) {
+    document
+        .querySelectorAll("a.rlink, a.nlink")
+        .forEach((link) => {
+        link.href = `/template-overall=none/${link.getAttribute("href")}`;
+    });
+}
+/* SCROLLING */
+window.addEventListener("beforeunload", () => {
+    window.scrollTo(0, 0);
+});
+
 let disableKeybinds = false;
 /* KEYBINDS */
 document.addEventListener("keydown", (event) => {
@@ -253,6 +350,7 @@ document.addEventListener("keydown", (event) => {
 });
 document.addEventListener("keyup", (event) => {
     if (disableKeybinds) {
+        showToast("Previous request not yet completed.", ["error"]);
         return;
     }
     const target = event.target;
@@ -287,9 +385,8 @@ async function handleKeystroke(key) {
             : `/template-overall=none${location.pathname}${location.search}${location.hash}`);
     }
     else if (key === config.keybinds.moveJP) {
-        move(config.jumpPoint).then(() => {
-            showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
-        });
+        await move(config.jumpPoint);
+        showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
     }
     else if (key === config.keybinds.move) {
         if (location.pathname.includes("/region=")) {
@@ -297,9 +394,8 @@ async function handleKeystroke(key) {
         }
         else {
             let region = document.querySelector("li a.rlink:nth-of-type(3)").textContent;
-            move(region.toLowerCase().replaceAll(" ", "_")).then(() => {
-                showToast(`Moved to ${region}`, ["success"]);
-            });
+            await move(region.toLowerCase().replaceAll(" ", "_"));
+            showToast(`Moved to ${region}`, ["success"]);
         }
     }
     else if (key === config.keybinds.endorse) {
@@ -307,7 +403,8 @@ async function handleKeystroke(key) {
             document.querySelector("button.endorse").click();
         }
         else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
-            document.querySelector("button[data-action=endorse]:not([disabled])").click();
+            await quickEndo(document.querySelector("button[data-action=endorse]:not([disabled])")
+                .id);
         }
         else {
             location.assign(`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`);
@@ -319,42 +416,38 @@ async function handleKeystroke(key) {
     }
     else if (key === config.keybinds.doss &&
         /\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
-        document.querySelector("button[data-action=doss]:not([disabled])").click();
+        await quickDoss(document.querySelector("button[data-action=endorse]:not([disabled])").id);
     }
     else if (key === config.keybinds.viewDossier) {
         location.assign("/template-overall=none/page=dossier");
     }
     else if (key === config.keybinds.clearDossier) {
-        clearDossier().then(() => {
-            document
-                .querySelectorAll("button.dossed")
-                .forEach((button) => {
-                button.disabled = false;
-                button.classList.remove("dossed");
-            });
-            showToast("Cleared dossier.", ["success"]);
+        await clearDossier();
+        document
+            .querySelectorAll("button.dossed")
+            .forEach((button) => {
+            button.disabled = false;
+            button.classList.remove("dossed");
         });
+        showToast("Cleared dossier.", ["success"]);
     }
     else if (key === config.keybinds.appointRO &&
         location.pathname.includes("/region=")) {
         const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
             .region;
-        appointRO(region).then(() => {
-            showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
-        });
+        await appointRO(region);
+        showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
     }
     else if (key === config.keybinds.apply) {
-        applyWA().then(() => {
-            showToast("Applied to the World Assembly.", ["success"]);
-        });
+        await applyWA();
+        showToast("Applied to the World Assembly.", ["success"]);
     }
     else if (key === config.keybinds.global) {
         location.assign("/page=ajax2/a=reports/view=world/filter=change");
     }
     else if (key === config.keybinds.resign) {
-        resignWA().then(() => {
-            showToast("Resigned from the World Assembly.", ["success"]);
-        });
+        await resignWA();
+        showToast("Resigned from the World Assembly.", ["success"]);
     }
     else if (key === config.keybinds.joinWA) {
         document.querySelector("form[action='/cgi-bin/join_un.cgi'] button[type='submit']").click();
@@ -377,104 +470,11 @@ async function handleKeystroke(key) {
     return true;
 }
 
-/* QUICK ENDO */
-async function quickEndo() {
-    let happenings = document.querySelectorAll("li[id^='happening-']");
-    happenings.forEach((happening) => {
-        if (happening.textContent?.includes("was admitted to the World Assembly") ||
-            happening.textContent?.includes("endorsed")) {
-            let nation = happening
-                ?.querySelector(".nnameblock")
-                .textContent.toLowerCase()
-                .replaceAll(" ", "_");
-            if (nation !== currentNation) {
-                let button = createElement("button", {
-                    textContent: "Endo",
-                    id: nation,
-                });
-                button.dataset.action = "endorse";
-                happening.querySelector(".nlink").after(button);
-                button.addEventListener("click", () => {
-                    document
-                        .querySelectorAll("button")
-                        .forEach((button) => (button.disabled = true));
-                    endo(nation).then(() => {
-                        document
-                            .querySelectorAll(`[id="${nation}"]`)
-                            .forEach((button) => button.classList.add("endorsed"));
-                        document
-                            .querySelectorAll("button:not(.endorsed)")
-                            .forEach((button) => (button.disabled = false));
-                    });
-                });
-            }
-        }
-    });
-}
-/* QUICK DOSS */
-async function quickDoss() {
-    document.querySelectorAll("a.nlink").forEach((link) => {
-        let nation = link
-            .querySelector(".nnameblock")
-            .textContent.toLowerCase()
-            .replaceAll(" ", "_");
-        let button = createElement("button", {
-            textContent: "Doss",
-            id: nation,
-            disabled: dossed.includes(nation),
-        });
-        button.dataset.action = "doss";
-        if (dossed.includes(nation)) {
-            button.classList.add("dossed");
-        }
-        link.after(button);
-        button.addEventListener("click", () => {
-            document
-                .querySelectorAll("button")
-                .forEach((button) => (button.disabled = true));
-            doss(nation).then(() => {
-                document
-                    .querySelectorAll(`[id="${nation}"]`)
-                    .forEach((button) => button.classList.add("dossed"));
-                document
-                    .querySelectorAll("button:not(.dossed)")
-                    .forEach((button) => (button.disabled = false));
-                console.log("buttons enabled");
-            });
-        });
-    });
-}
-/* REPORTS LOAD TIME */
-function timePerformance() {
-    const duration = performance.getEntriesByType("navigation")[0].duration;
-    if (!duration) {
-        setTimeout(timePerformance, 0);
-    }
-    else {
-        document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
-    }
-}
-if (location.pathname.includes("page=reports")) {
-    timePerformance();
-}
-/* REPLACE AJAX2 LINKS */
-if (location.pathname.includes("page=ajax2")) {
-    document
-        .querySelectorAll("a.rlink, a.nlink")
-        .forEach((link) => {
-        link.href = `/template-overall=none/${link.getAttribute("href")}`;
-    });
-}
-/* SCROLLING */
-window.addEventListener("beforeunload", () => {
-    window.scrollTo(0, 0);
-});
-
 initialize().then(() => {
     if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname)) {
-        quickEndo();
+        initializeQuickEndo();
     }
     else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
-        quickDoss();
+        initializeQuickDoss();
     }
 });

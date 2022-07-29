@@ -27,7 +27,7 @@
 	padding: 0.5rem;
 	border-radius: 0.5rem;
 	box-shadow: var(--shadow);
-	transition: 0.5s ease-in-out;
+	transition: 0.25s ease-in-out;
 	transition-property: all;
 	max-width: 50vw;
 	line-height: 1.2;

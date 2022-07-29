@@ -8,6 +8,7 @@ import {
 	resignWA,
 	showToast,
 } from "./utils";
+import { quickDoss, quickEndo } from "./main";
 
 let disableKeybinds = false;
 
@@ -21,6 +22,7 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("keyup", (event) => {
 	if (disableKeybinds) {
+		showToast("Previous request not yet completed.", ["error"]);
 		return;
 	}
 
@@ -62,9 +64,8 @@ async function handleKeystroke(key: string) {
 				: `/template-overall=none${location.pathname}${location.search}${location.hash}`,
 		);
 	} else if (key === config.keybinds.moveJP) {
-		move(config.jumpPoint).then(() => {
-			showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
-		});
+		await move(config.jumpPoint);
+		showToast(`Moved back to ${config.jumpPointName}.`, ["success"]);
 	} else if (key === config.keybinds.move) {
 		if (location.pathname.includes("/region=")) {
 			(
@@ -74,9 +75,8 @@ async function handleKeystroke(key: string) {
 			let region = document.querySelector(
 				"li a.rlink:nth-of-type(3)",
 			).textContent;
-			move(region.toLowerCase().replaceAll(" ", "_")).then(() => {
-				showToast(`Moved to ${region}`, ["success"]);
-			});
+			await move(region.toLowerCase().replaceAll(" ", "_"));
+			showToast(`Moved to ${region}`, ["success"]);
 		}
 	} else if (key === config.keybinds.endorse) {
 		if (location.pathname.includes("/nation=")) {
@@ -86,11 +86,10 @@ async function handleKeystroke(key: string) {
 				location.pathname,
 			)
 		) {
-			(
-				document.querySelector(
-					"button[data-action=endorse]:not([disabled])",
-				) as HTMLButtonElement
-			).click();
+			await quickEndo(
+				document.querySelector("button[data-action=endorse]:not([disabled])")
+					.id,
+			);
 		} else {
 			location.assign(
 				`/page=ajax2/a=reports/view=region.${config.jumpPoint}/filter=member/action=endo`,
@@ -111,42 +110,36 @@ async function handleKeystroke(key: string) {
 			location.pathname,
 		)
 	) {
-		(
-			document.querySelector(
-				"button[data-action=doss]:not([disabled])",
-			) as HTMLButtonElement
-		).click();
+		await quickDoss(
+			document.querySelector("button[data-action=endorse]:not([disabled])").id,
+		);
 	} else if (key === config.keybinds.viewDossier) {
 		location.assign("/template-overall=none/page=dossier");
 	} else if (key === config.keybinds.clearDossier) {
-		clearDossier().then(() => {
-			document
-				.querySelectorAll("button.dossed")
-				.forEach((button: HTMLButtonElement) => {
-					button.disabled = false;
-					button.classList.remove("dossed");
-				});
-			showToast("Cleared dossier.", ["success"]);
-		});
+		await clearDossier();
+		document
+			.querySelectorAll("button.dossed")
+			.forEach((button: HTMLButtonElement) => {
+				button.disabled = false;
+				button.classList.remove("dossed");
+			});
+		showToast("Cleared dossier.", ["success"]);
 	} else if (
 		key === config.keybinds.appointRO &&
 		location.pathname.includes("/region=")
 	) {
 		const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
 			.region;
-		appointRO(region).then(() => {
-			showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
-		});
+		await appointRO(region);
+		showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
 	} else if (key === config.keybinds.apply) {
-		applyWA().then(() => {
-			showToast("Applied to the World Assembly.", ["success"]);
-		});
+		await applyWA();
+		showToast("Applied to the World Assembly.", ["success"]);
 	} else if (key === config.keybinds.global) {
 		location.assign("/page=ajax2/a=reports/view=world/filter=change");
 	} else if (key === config.keybinds.resign) {
-		resignWA().then(() => {
-			showToast("Resigned from the World Assembly.", ["success"]);
-		});
+		await resignWA();
+		showToast("Resigned from the World Assembly.", ["success"]);
 	} else if (key === config.keybinds.joinWA) {
 		(
 			document.querySelector(

@@ -2,7 +2,7 @@ import "./utils";
 
 import "./styles";
 import "./keybinds";
-import { quickDoss, quickEndo } from "./main";
+import { initializeQuickDoss, initializeQuickEndo } from "./main";
 import { initialize, showToast } from "./utils";
 
 initialize().then(() => {
@@ -11,12 +11,12 @@ initialize().then(() => {
 			location.pathname,
 		)
 	) {
-		quickEndo();
+		initializeQuickEndo();
 	} else if (
 		/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(
 			location.pathname,
 		)
 	) {
-		quickDoss();
+		initializeQuickDoss();
 	}
 });

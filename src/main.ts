@@ -6,10 +6,25 @@ import {
 	endo,
 	getChkDoss,
 	getLocalId,
+	showToast,
 } from "./utils";
 
 /* QUICK ENDO */
-export async function quickEndo() {
+export async function quickEndo(nation) {
+	document
+		.querySelectorAll("button")
+		.forEach((button) => (button.disabled = true));
+
+	await endo(nation);
+	document
+		.querySelectorAll(`[id="${nation}"]`)
+		.forEach((button) => button.classList.add("endorsed"));
+	document
+		.querySelectorAll("button:not(.endorsed)")
+		.forEach((button: HTMLButtonElement) => (button.disabled = false));
+}
+
+export async function initializeQuickEndo() {
 	let happenings = document.querySelectorAll("li[id^='happening-']");
 
 	happenings.forEach((happening) => {
@@ -30,20 +45,7 @@ export async function quickEndo() {
 				button.dataset.action = "endorse";
 				happening.querySelector(".nlink").after(button);
 				button.addEventListener("click", () => {
-					document
-						.querySelectorAll("button")
-						.forEach((button) => (button.disabled = true));
-
-					endo(nation).then(() => {
-						document
-							.querySelectorAll(`[id="${nation}"]`)
-							.forEach((button) => button.classList.add("endorsed"));
-						document
-							.querySelectorAll("button:not(.endorsed)")
-							.forEach(
-								(button: HTMLButtonElement) => (button.disabled = false),
-							);
-					});
+					quickEndo(nation);
 				});
 			}
 		}
@@ -51,7 +53,22 @@ export async function quickEndo() {
 }
 
 /* QUICK DOSS */
-export async function quickDoss() {
+export async function quickDoss(nation: string) {
+	document
+		.querySelectorAll("button")
+		.forEach((button) => (button.disabled = true));
+
+	await doss(nation);
+	showToast(`Added ${nation} to dossier`, ["success"]);
+	document
+		.querySelectorAll(`[id="${nation}"]`)
+		.forEach((button) => button.classList.add("dossed"));
+	document
+		.querySelectorAll("button:not(.dossed)")
+		.forEach((button: HTMLButtonElement) => (button.disabled = false));
+}
+
+export async function initializeQuickDoss() {
 	document.querySelectorAll("a.nlink").forEach((link) => {
 		let nation = link
 			.querySelector(".nnameblock")
@@ -68,19 +85,7 @@ export async function quickDoss() {
 		}
 		link.after(button);
 		button.addEventListener("click", () => {
-			document
-				.querySelectorAll("button")
-				.forEach((button) => (button.disabled = true));
-
-			doss(nation).then(() => {
-				document
-					.querySelectorAll(`[id="${nation}"]`)
-					.forEach((button) => button.classList.add("dossed"));
-				document
-					.querySelectorAll("button:not(.dossed)")
-					.forEach((button: HTMLButtonElement) => (button.disabled = false));
-				console.log("buttons enabled");
-			});
+			quickDoss(nation);
 		});
 	});
 }
