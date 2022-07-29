@@ -79,24 +79,23 @@ export async function quickDoss() {
 				document
 					.querySelectorAll("button:not(.dossed)")
 					.forEach((button: HTMLButtonElement) => (button.disabled = false));
+				console.log("buttons enabled");
 			});
 		});
 	});
 }
 
 /* REPORTS LOAD TIME */
-export function showLoadTime() {
-	function timePerformance() {
-		const duration = performance.getEntriesByType("navigation")[0].duration;
-		if (!duration) {
-			setTimeout(timePerformance, 0);
-		} else {
-			document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
-		}
+function timePerformance() {
+	const duration = performance.getEntriesByType("navigation")[0].duration;
+	if (!duration) {
+		setTimeout(timePerformance, 0);
+	} else {
+		document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
 	}
-	if (location.pathname.includes("page=reports")) {
-		timePerformance();
-	}
+}
+if (location.pathname.includes("page=reports")) {
+	timePerformance();
 }
 
 /* REPLACE AJAX2 LINKS */

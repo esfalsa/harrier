@@ -2,7 +2,7 @@ import "./utils";
 
 import "./styles";
 import "./keybinds";
-import { showLoadTime, quickDoss, quickEndo } from "./main";
+import { quickDoss, quickEndo } from "./main";
 import { initialize, showToast } from "./utils";
 
 initialize().then(() => {
@@ -19,6 +19,4 @@ initialize().then(() => {
 	) {
 		quickDoss();
 	}
-
-	showLoadTime();
 });

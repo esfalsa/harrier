@@ -96,6 +96,19 @@ async function fetchNS(pathname, searchParams = "", options = {}) {
     options.redirect = "manual";
     return fetch(resource, options);
 }
+async function postNS(endpoint, data) {
+    let payload = new FormData();
+    for (const [key, value] of Object.entries(data)) {
+        payload.append(key, value);
+    }
+    return fetchNS(endpoint, "", {
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        body: payload,
+    });
+}
 /* REQUESTS */
 async function getChkDoss() {
     const response = await (await fetchNS("template-overall=none/page=dossier")).text();
@@ -114,100 +127,58 @@ async function getLocalId() {
     ];
 }
 async function doss(nation) {
-    let data = new FormData();
-    data.append("nation", nation);
-    data.append("chk", chk);
-    data.append("action", "add");
-    fetchNS("template-overall=none/page=dossier", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("template-overall=none/page=dossier", {
+        nation: nation,
+        chk: chk,
+        action: "add",
     });
 }
 async function endo(nation) {
-    let data = new FormData();
-    data.append("nation", nation);
-    data.append("localid", localid);
-    data.append("action", "endorse");
-    fetchNS("cgi-bin/endorse.cgi", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("cgi-bin/endorse.cgi", {
+        nation: nation,
+        localid: localid,
+        action: "endorse",
     });
 }
 async function move(region) {
-    let data = new FormData();
-    data.append("localid", localid);
-    data.append("region_name", region);
-    data.append("move_region", "1");
-    fetchNS("page=change_region", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("template-overall=none/page=change_region", {
+        localid: localid,
+        region_name: region,
+        move_region: "1",
     });
 }
 async function applyWA() {
-    let data = new FormData();
-    data.append("action", "join_UN");
-    data.append("chk", chk);
-    data.append("submit", "1");
-    fetchNS("page=UN_status", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("template-overall=none/page=UN_status", {
+        action: "join_UN",
+        chk: chk,
+        submit: "1",
     });
 }
 async function resignWA() {
-    let data = new FormData();
-    data.append("action", "leave_UN");
-    data.append("chk", chk);
-    data.append("submit", "1");
-    fetchNS("page=UN_status", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("template-overall=none/page=UN_status", {
+        action: "leave_UN",
+        chk: chk,
+        submit: "1",
     });
 }
 async function clearDossier() {
-    let data = new FormData();
-    data.append("chk", chk);
-    data.append("clear_dossier", "1");
-    fetchNS("page=dossier", "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS("template-overall=none/page=dossier", {
+        chk: chk,
+        clear_dossier: "1",
     });
 }
 async function appointRO(region) {
-    let data = new FormData();
-    data.append("page", "region_control");
-    data.append("region", region);
-    data.append("chk", chk);
-    data.append("nation", currentNation);
-    data.append("office_name", config.officerName);
-    data.append("authority_A", "on");
-    data.append("authority_C", "on");
-    data.append("authority_E", "on");
-    data.append("authority_P", "on");
-    data.append("editofficer", "1");
-    fetchNS(`page=region_control/region=${region}`, "", {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-        body: data,
+    await postNS(`page=region_control/region=${region}`, {
+        page: "region_control",
+        region: region,
+        chk: chk,
+        nation: currentNation,
+        office_name: config.officerName,
+        authority_A: "on",
+        authority_C: "on",
+        authority_E: "on",
+        authority_P: "on",
+        editofficer: "1",
     });
 }
 document.body.appendChild(createElement("div", {
@@ -468,24 +439,23 @@ async function quickDoss() {
                 document
                     .querySelectorAll("button:not(.dossed)")
                     .forEach((button) => (button.disabled = false));
+                console.log("buttons enabled");
             });
         });
     });
 }
 /* REPORTS LOAD TIME */
-function showLoadTime() {
-    function timePerformance() {
-        const duration = performance.getEntriesByType("navigation")[0].duration;
-        if (!duration) {
-            setTimeout(timePerformance, 0);
-        }
-        else {
-            document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
-        }
+function timePerformance() {
+    const duration = performance.getEntriesByType("navigation")[0].duration;
+    if (!duration) {
+        setTimeout(timePerformance, 0);
     }
-    if (location.pathname.includes("page=reports")) {
-        timePerformance();
+    else {
+        document.querySelector("h1").textContent += ` (${duration.toFixed(1)}ms)`;
     }
+}
+if (location.pathname.includes("page=reports")) {
+    timePerformance();
 }
 /* REPLACE AJAX2 LINKS */
 if (location.pathname.includes("page=ajax2")) {
@@ -507,5 +477,4 @@ initialize().then(() => {
     else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
         quickDoss();
     }
-    showLoadTime();
 });

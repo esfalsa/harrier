@@ -42,6 +42,25 @@ export async function fetchNS(
 	return fetch(resource, options);
 }
 
+export async function postNS(
+	endpoint: string | URL,
+	data: { [s: string]: string },
+) {
+	let payload = new FormData();
+
+	for (const [key, value] of Object.entries(data)) {
+		payload.append(key, value);
+	}
+
+	return fetchNS(endpoint, "", {
+		method: "POST",
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+		body: payload,
+	});
+}
+
 /* REQUESTS */
 export async function getChkDoss(): Promise<[string, string[]]> {
 	const response = await (
@@ -75,114 +94,65 @@ export async function getLocalId() {
 	];
 }
 
-export async function doss(nation: string | Blob) {
-	let data = new FormData();
-	data.append("nation", nation);
-	data.append("chk", chk);
-	data.append("action", "add");
-
-	fetchNS("template-overall=none/page=dossier", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+export async function doss(nation: string) {
+	await postNS("template-overall=none/page=dossier", {
+		nation: nation,
+		chk: chk,
+		action: "add",
 	});
 }
 
-export async function endo(nation: string | Blob) {
-	let data = new FormData();
-	data.append("nation", nation);
-	data.append("localid", localid);
-	data.append("action", "endorse");
-
-	fetchNS("cgi-bin/endorse.cgi", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+export async function endo(nation: string) {
+	await postNS("cgi-bin/endorse.cgi", {
+		nation: nation,
+		localid: localid,
+		action: "endorse",
 	});
 }
 
-export async function move(region: string | Blob) {
-	let data = new FormData();
-	data.append("localid", localid);
-	data.append("region_name", region);
-	data.append("move_region", "1");
-
-	fetchNS("page=change_region", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+export async function move(region: string) {
+	await postNS("template-overall=none/page=change_region", {
+		localid: localid,
+		region_name: region,
+		move_region: "1",
 	});
 }
 
 export async function applyWA() {
-	let data = new FormData();
-	data.append("action", "join_UN");
-	data.append("chk", chk);
-	data.append("submit", "1");
-
-	fetchNS("page=UN_status", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+	await postNS("template-overall=none/page=UN_status", {
+		action: "join_UN",
+		chk: chk,
+		submit: "1",
 	});
 }
 
 export async function resignWA() {
-	let data = new FormData();
-	data.append("action", "leave_UN");
-	data.append("chk", chk);
-	data.append("submit", "1");
-
-	fetchNS("page=UN_status", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+	await postNS("template-overall=none/page=UN_status", {
+		action: "leave_UN",
+		chk: chk,
+		submit: "1",
 	});
 }
 
 export async function clearDossier() {
-	let data = new FormData();
-	data.append("chk", chk);
-	data.append("clear_dossier", "1");
-
-	fetchNS("page=dossier", "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+	await postNS("template-overall=none/page=dossier", {
+		chk: chk,
+		clear_dossier: "1",
 	});
 }
 
-export async function appointRO(region: string | Blob) {
-	let data = new FormData();
-	data.append("page", "region_control");
-	data.append("region", region);
-	data.append("chk", chk);
-	data.append("nation", currentNation);
-	data.append("office_name", config.officerName);
-	data.append("authority_A", "on");
-	data.append("authority_C", "on");
-	data.append("authority_E", "on");
-	data.append("authority_P", "on");
-	data.append("editofficer", "1");
-
-	fetchNS(`page=region_control/region=${region}`, "", {
-		method: "POST",
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		body: data,
+export async function appointRO(region: string) {
+	await postNS(`page=region_control/region=${region}`, {
+		page: "region_control",
+		region: region,
+		chk: chk,
+		nation: currentNation,
+		office_name: config.officerName,
+		authority_A: "on",
+		authority_C: "on",
+		authority_E: "on",
+		authority_P: "on",
+		editofficer: "1",
 	});
 }
 
