@@ -3,7 +3,7 @@ import {
 	applyWA,
 	appointRO,
 	clearDossier,
-	currentNation,
+	siteData,
 	move,
 	resignWA,
 	showToast,
@@ -137,7 +137,9 @@ async function handleKeystroke(key: string) {
 		const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
 			.region;
 		await appointRO(region);
-		showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
+		showToast(`Appointed ${siteData.currentNation} as RO in ${region}`, [
+			"success",
+		]);
 	} else if (key === config.keybinds.global) {
 		location.assign("/page=ajax2/a=reports/view=world/filter=change");
 	} else if (key === config.keybinds.apply) {

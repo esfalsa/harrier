@@ -1,13 +1,41 @@
 import config from "./config";
 
-export let currentNation: string, localid: string;
-export let chk: string, dossed: string[];
+let currentNation: string, localid: string;
+let chk: string, dossed: string[];
+
+type SiteData = {
+	currentNation: string;
+	localid: string;
+	chk: string;
+	dossed: string[];
+};
+
+export const siteData: SiteData = {
+	currentNation: null,
+	localid: null,
+	chk: null,
+	dossed: null,
+};
 
 export async function initialize() {
-	[[currentNation, localid], [chk, dossed]] = await Promise.all([
-		getLocalId(),
-		getChkDoss(),
-	]);
+	if (
+		/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(
+			location.pathname,
+		) || // quick endo
+		location.pathname.includes("page=reports") // preload for chasing moves
+	) {
+		[currentNation, localid] = await getLocalId();
+	} else {
+		[chk, dossed] = await getChkDoss();
+	}
+}
+
+export async function loadRemaining() {
+	if (!currentNation && !localid) {
+		[currentNation, localid] = await getLocalId();
+	} else if (!chk && !dossed) {
+		[chk, dossed] = await getChkDoss();
+	}
 }
 
 export function createElement(
@@ -47,6 +75,16 @@ export async function postNS(
 	data: Record<string, string>,
 ) {
 	const payload = new FormData();
+
+	if ("chk" in data && !chk) {
+		await loadRemaining();
+		showToast("Code chk not loaded. Please try again.");
+		throw new Error("Chk not loaded.");
+	} else if ("localid" in data && !localid) {
+		await loadRemaining();
+		showToast("Code localid not loaded. Please try again.");
+		throw new Error("LocalId not loaded.");
+	}
 
 	for (const [key, value] of Object.entries(data)) {
 		payload.append(key, value);
@@ -94,6 +132,7 @@ export async function getLocalId() {
 	];
 }
 
+/* ACTIONS */
 export async function doss(nation: string) {
 	await postNS("template-overall=none/page=dossier", {
 		nation: nation,

@@ -1,11 +1,4 @@
-import {
-	createElement,
-	currentNation,
-	doss,
-	dossed,
-	endo,
-	showToast,
-} from "./utils";
+import { createElement, siteData, doss, endo, showToast } from "./utils";
 
 /* QUICK ENDO */
 export async function quickEndo(nation: string) {
@@ -35,7 +28,7 @@ export function initializeQuickEndo() {
 				.textContent.toLowerCase()
 				.replaceAll(" ", "_");
 
-			if (nation !== currentNation) {
+			if (nation !== siteData.currentNation) {
 				const button = createElement("button", {
 					textContent: "Endo",
 					id: nation,
@@ -75,10 +68,10 @@ export function initializeQuickDoss() {
 		const button = createElement("button", {
 			textContent: "Doss",
 			id: nation,
-			disabled: dossed.includes(nation),
+			disabled: siteData.dossed.includes(nation),
 		});
 		button.dataset.action = "doss";
-		if (dossed.includes(nation)) {
+		if (siteData.dossed.includes(nation)) {
 			button.classList.add("dossed");
 		}
 		link.after(button);

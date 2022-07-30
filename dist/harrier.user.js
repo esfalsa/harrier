@@ -80,11 +80,29 @@ const config = {
 
 let currentNation, localid;
 let chk, dossed;
+const siteData = {
+    currentNation: null,
+    localid: null,
+    chk: null,
+    dossed: null,
+};
 async function initialize() {
-    [[currentNation, localid], [chk, dossed]] = await Promise.all([
-        getLocalId(),
-        getChkDoss(),
-    ]);
+    if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname) || // quick endo
+        location.pathname.includes("page=reports") // preload for chasing moves
+    ) {
+        [currentNation, localid] = await getLocalId();
+    }
+    else {
+        [chk, dossed] = await getChkDoss();
+    }
+}
+async function loadRemaining() {
+    if (!currentNation && !localid) {
+        [currentNation, localid] = await getLocalId();
+    }
+    else if (!chk && !dossed) {
+        [chk, dossed] = await getChkDoss();
+    }
 }
 function createElement(tagName, properties = {}) {
     return Object.assign(document.createElement(tagName), properties);
@@ -101,6 +119,16 @@ async function fetchNS(pathname, searchParams = "", options = {}) {
 }
 async function postNS(endpoint, data) {
     const payload = new FormData();
+    if ("chk" in data && !chk) {
+        await loadRemaining();
+        showToast("Code chk not loaded. Please try again.");
+        throw new Error("Chk not loaded.");
+    }
+    else if ("localid" in data && !localid) {
+        await loadRemaining();
+        showToast("Code localid not loaded. Please try again.");
+        throw new Error("LocalId not loaded.");
+    }
     for (const [key, value] of Object.entries(data)) {
         payload.append(key, value);
     }
@@ -129,6 +157,7 @@ async function getLocalId() {
         response.match(/<input type="hidden" name="localid" value="(?<localid>.+)">/).groups.localid,
     ];
 }
+/* ACTIONS */
 async function doss(nation) {
     await postNS("template-overall=none/page=dossier", {
         nation: nation,
@@ -268,7 +297,7 @@ function initializeQuickEndo() {
                 ?.querySelector(".nnameblock")
                 .textContent.toLowerCase()
                 .replaceAll(" ", "_");
-            if (nation !== currentNation) {
+            if (nation !== siteData.currentNation) {
                 const button = createElement("button", {
                     textContent: "Endo",
                     id: nation,
@@ -305,10 +334,10 @@ function initializeQuickDoss() {
         const button = createElement("button", {
             textContent: "Doss",
             id: nation,
-            disabled: dossed.includes(nation),
+            disabled: siteData.dossed.includes(nation),
         });
         button.dataset.action = "doss";
-        if (dossed.includes(nation)) {
+        if (siteData.dossed.includes(nation)) {
             button.classList.add("dossed");
         }
         link.after(button);
@@ -446,7 +475,9 @@ async function handleKeystroke(key) {
         const region = location.pathname.match(/\/region=(?<region>.*)\/?/).groups
             .region;
         await appointRO(region);
-        showToast(`Appointed ${currentNation} as RO in ${region}`, ["success"]);
+        showToast(`Appointed ${siteData.currentNation} as RO in ${region}`, [
+            "success",
+        ]);
     }
     else if (key === config.keybinds.global) {
         location.assign("/page=ajax2/a=reports/view=world/filter=change");

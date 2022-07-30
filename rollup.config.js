@@ -10,8 +10,7 @@ export default {
 	input: "src/index.ts",
 	output: {
 		file: "dist/harrier.user.js",
-		format: "es",
-		manualChunks: () => null,
+		format: "esm",
 	},
 	plugins: [
 		typescript(),
