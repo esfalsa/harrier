@@ -4,6 +4,7 @@ import "./styles";
 import "./keybinds";
 import { initializeQuickDoss, initializeQuickEndo } from "./main";
 import { initialize } from "./utils";
+import { initializeKeybinds } from "./keybinds";
 
 initialize()
 	.then(() => {
@@ -20,6 +21,8 @@ initialize()
 		) {
 			initializeQuickDoss();
 		}
+
+		initializeKeybinds();
 	})
 	.catch((error) => {
 		console.error(error);

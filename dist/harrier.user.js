@@ -78,30 +78,28 @@ const config = {
     },
 };
 
-let currentNation, localid;
-let chk, dossed;
 const siteData = {
     currentNation: null,
-    localid: null,
-    chk: null,
     dossed: null,
 };
+let localid;
+let chk;
 async function initialize() {
     if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*endo.*/.test(location.pathname) || // quick endo
         location.pathname.includes("page=reports") // preload for chasing moves
     ) {
-        [currentNation, localid] = await getLocalId();
+        [siteData.currentNation, localid] = await getLocalId();
     }
     else {
-        [chk, dossed] = await getChkDoss();
+        [chk, siteData.dossed] = await getChkDoss();
     }
 }
 async function loadRemaining() {
-    if (!currentNation && !localid) {
-        [currentNation, localid] = await getLocalId();
+    if (!siteData.currentNation && !localid) {
+        [siteData.currentNation, localid] = await getLocalId();
     }
-    else if (!chk && !dossed) {
-        [chk, dossed] = await getChkDoss();
+    else if (!chk && !siteData.dossed) {
+        [chk, siteData.dossed] = await getChkDoss();
     }
 }
 function createElement(tagName, properties = {}) {
@@ -204,7 +202,7 @@ async function appointRO(region) {
         page: "region_control",
         region: region,
         chk: chk,
-        nation: currentNation,
+        nation: siteData.currentNation,
         office_name: config.officerName,
         authority_A: "on",
         authority_C: "on",
@@ -385,28 +383,30 @@ document.addEventListener("keydown", (event) => {
         event.stopPropagation();
     }
 });
-document.addEventListener("keyup", (event) => {
-    if (disableKeybinds) {
-        showToast("Previous request not yet completed.", ["error"]);
-        return;
-    }
-    const target = event.target;
-    if (target.tagName == "INPUT" ||
-        target.tagName == "SELECT" ||
-        target.tagName == "TEXTAREA" ||
-        target.isContentEditable) {
-        return;
-    }
-    disableKeybinds = true;
-    handleKeystroke(event.key)
-        .then(() => {
-        disableKeybinds = false;
-    })
-        .catch((e) => {
-        console.error(e);
-        disableKeybinds = false;
+function initializeKeybinds() {
+    document.addEventListener("keyup", (event) => {
+        if (disableKeybinds) {
+            showToast("Previous request not yet completed.", ["error"]);
+            return;
+        }
+        const target = event.target;
+        if (target.tagName == "INPUT" ||
+            target.tagName == "SELECT" ||
+            target.tagName == "TEXTAREA" ||
+            target.isContentEditable) {
+            return;
+        }
+        disableKeybinds = true;
+        handleKeystroke(event.key)
+            .then(() => {
+            disableKeybinds = false;
+        })
+            .catch((e) => {
+            console.error(e);
+            disableKeybinds = false;
+        });
     });
-});
+}
 async function handleKeystroke(key) {
     if (key === config.keybinds.reports) {
         location.assign(location.pathname.includes("page=reports")
@@ -559,6 +559,7 @@ initialize()
     else if (/\/page=ajax2\/a=reports\/view=region\..+\/action=.*doss.*/.test(location.pathname)) {
         initializeQuickDoss();
     }
+    initializeKeybinds();
 })
     .catch((error) => {
     console.error(error);

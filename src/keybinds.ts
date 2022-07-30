@@ -26,33 +26,35 @@ document.addEventListener("keydown", (event) => {
 	}
 });
 
-document.addEventListener("keyup", (event) => {
-	if (disableKeybinds) {
-		showToast("Previous request not yet completed.", ["error"]);
-		return;
-	}
+export function initializeKeybinds() {
+	document.addEventListener("keyup", (event) => {
+		if (disableKeybinds) {
+			showToast("Previous request not yet completed.", ["error"]);
+			return;
+		}
 
-	const target = event.target as HTMLElement;
-	if (
-		target.tagName == "INPUT" ||
-		target.tagName == "SELECT" ||
-		target.tagName == "TEXTAREA" ||
-		target.isContentEditable
-	) {
-		return;
-	}
+		const target = event.target as HTMLElement;
+		if (
+			target.tagName == "INPUT" ||
+			target.tagName == "SELECT" ||
+			target.tagName == "TEXTAREA" ||
+			target.isContentEditable
+		) {
+			return;
+		}
 
-	disableKeybinds = true;
+		disableKeybinds = true;
 
-	handleKeystroke(event.key)
-		.then(() => {
-			disableKeybinds = false;
-		})
-		.catch((e) => {
-			console.error(e);
-			disableKeybinds = false;
-		});
-});
+		handleKeystroke(event.key)
+			.then(() => {
+				disableKeybinds = false;
+			})
+			.catch((e) => {
+				console.error(e);
+				disableKeybinds = false;
+			});
+	});
+}
 
 async function handleKeystroke(key: string) {
 	if (key === config.keybinds.reports) {

@@ -1,21 +1,17 @@
 import config from "./config";
 
-let currentNation: string, localid: string;
-let chk: string, dossed: string[];
-
 type SiteData = {
 	currentNation: string;
-	localid: string;
-	chk: string;
 	dossed: string[];
 };
 
 export const siteData: SiteData = {
 	currentNation: null,
-	localid: null,
-	chk: null,
 	dossed: null,
 };
+
+let localid;
+let chk;
 
 export async function initialize() {
 	if (
@@ -24,17 +20,17 @@ export async function initialize() {
 		) || // quick endo
 		location.pathname.includes("page=reports") // preload for chasing moves
 	) {
-		[currentNation, localid] = await getLocalId();
+		[siteData.currentNation, localid] = await getLocalId();
 	} else {
-		[chk, dossed] = await getChkDoss();
+		[chk, siteData.dossed] = await getChkDoss();
 	}
 }
 
 export async function loadRemaining() {
-	if (!currentNation && !localid) {
-		[currentNation, localid] = await getLocalId();
-	} else if (!chk && !dossed) {
-		[chk, dossed] = await getChkDoss();
+	if (!siteData.currentNation && !localid) {
+		[siteData.currentNation, localid] = await getLocalId();
+	} else if (!chk && !siteData.dossed) {
+		[chk, siteData.dossed] = await getChkDoss();
 	}
 }
 
@@ -185,7 +181,7 @@ export async function appointRO(region: string) {
 		page: "region_control",
 		region: region,
 		chk: chk,
-		nation: currentNation,
+		nation: siteData.currentNation,
 		office_name: config.officerName,
 		authority_A: "on",
 		authority_C: "on",
