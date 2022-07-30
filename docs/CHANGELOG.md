@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/esfalsa/harrier/compare/harrier-v0.2.0...harrier-v0.2.1) (2022-07-30)
+
+
+### Bug Fixes
+
+* add types for localid and chk ([114437e](https://github.com/esfalsa/harrier/commit/114437e0af72de2d4372b04fb355023ec298373e))
+* initialize keybins after document load ([ecececc](https://github.com/esfalsa/harrier/commit/ecececc4aedb71e1f621da7abcb2cc98cf062c1b))
+* limit requests to one per input ([8a1e476](https://github.com/esfalsa/harrier/commit/8a1e476f6c5fe4f53da233cdc596ebdd0c14a126))
+
 ## [0.2.0](https://github.com/esfalsa/harrier/compare/harrier-v0.1.0...harrier-v0.2.0) (2022-07-29)
 
 

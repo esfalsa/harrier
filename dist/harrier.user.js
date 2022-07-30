@@ -7,12 +7,12 @@
 // @updateURL   https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
 // @downloadURL https://github.com/esfalsa/harrier/raw/main/dist/harrier.user.js
 // @homepageURL https://esfalsa.github.io/harrier/
-// @version     0.2.0
+// @version     0.2.1
 // @author      Pronoun
 // @license     AGPL-3.0-or-later
 // @grant       none
 // ==/UserScript==
-var version = "0.2.0";
+var version = "0.2.1";
 
 const config = {
     version: version,
