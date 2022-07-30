@@ -10,8 +10,8 @@ export const siteData: SiteData = {
 	dossed: null,
 };
 
-let localid;
-let chk;
+let localid: string;
+let chk: string;
 
 export async function initialize() {
 	if (
